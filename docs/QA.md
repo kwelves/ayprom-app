@@ -1,11 +1,11 @@
-# Проверка версии 1.0.0
+# Проверка версии 1.0.1
 
 Дата: 2026-09-08. Платформа: Windows x64, Node 24.17.0, Electron 44.2.0, Sharp 0.35.4.
 
 ## Автоматические проверки
 
 - TypeScript strict: без ошибок.
-- 42 теста: 42 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
+- 44 теста: 44 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
 - Production build: успешно. Renderer JS 310 kB, gzip 94.31 kB; CSS 14.14 kB.
 - Preset UI: Duplicate, Rename, Save, Reset, Delete, factory protection, session drafts, keyboard focus trap; полное закрытие/повторный запуск подтверждает сохранение пресета и темы.
 - Electron UI: загрузка renderer, отсутствие Node в renderer, ограниченный preload, папки и recursion, batch → utility → Sharp, preview, latest setting updates, history, 900×650.
@@ -15,7 +15,9 @@
 - NSIS silent install завершился кодом 0. app.asar установленной и unpacked-копии имеет одинаковый SHA-256.
 - Установщики НЕ подписаны: Get-AuthenticodeSignature = NotSigned.
 
-Исправление Windows aliases: первый CI выявил обход проверки вложенного output через короткое имя пути. Добавлен сначала падающий тест; после канонизации обеих сторон все 42 теста проходят локально и на GitHub runner.
+Исправление Windows aliases: первый CI выявил обход проверки вложенного output через короткое имя пути. Добавлен сначала падающий тест; после канонизации обеих сторон все тесты проходят локально и на GitHub runner.
+
+IPC Windows aliases: CI Portable использовал разные короткое и длинное представления пути собственного renderer. В 1.0.1 URL сверяется по realpath при сохранении проверки webContents, main frame и file protocol. Два теста подтверждают доверие тому же файлу и отказ чужим файлам/протоколам. Тег v1.0.0 сохранён в истории, публичного выпуска 1.0.0 нет.
 
 ## Processing regression
 
@@ -40,10 +42,10 @@ Watermark SHA-256 в source, unpacked resources и installed resources:
 
 | Артефакт                   | Размер, байт |    MiB |
 | -------------------------- | -----------: | -----: |
-| Setup 1.0.0                |    119102508 | 113.59 |
-| Portable 1.0.0             |    118872549 | 113.37 |
-| win-unpacked, сумма файлов |    409802155 | 390.82 |
-| installed-qa, сумма файлов |    409973502 | 390.98 |
+| Setup 1.0.1                |    119102800 | 113.59 |
+| Portable 1.0.1             |    118872753 | 113.37 |
+| win-unpacked, сумма файлов |    409802974 | 390.82 |
+| installed-qa, сумма файлов |    409974367 | 390.98 |
 
 Размер каталога означает сумму файлов, а не выделенные диском кластеры. Кэш пользовательского профиля в эти размеры не входит. Пересборка CI может изменить байты/хэши упаковки; SHA256SUMS.txt сопровождает каждый набор артефактов.
 
