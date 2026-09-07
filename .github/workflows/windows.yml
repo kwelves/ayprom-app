@@ -1,0 +1,82 @@
+name: Windows
+on:
+  push:
+    branches: [main]
+    tags: ["v*.*.*"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - run: node scripts/qa-presets.mjs
+      - run: node scripts/qa.mjs
+      - run: node scripts/extract-fixture.mjs
+      - run: npm run regression -- .tmp/embedded-fixture
+      - run: npm run package
+      - run: node scripts/qa.mjs "release/win-unpacked/AyProm Photo Processor.exe" ".tmp/embedded-fixture/figma-reference.png"
+      - shell: pwsh
+        run: |
+          $taskPortable = (Get-ChildItem release/*Portable*.exe | Select-Object -First 1).FullName
+          node scripts/qa-portable.mjs "$taskPortable" ".tmp/embedded-fixture/figma-reference.png"
+      - name: Verify NSIS installation
+        shell: pwsh
+        run: |
+          $taskDirectory = Join-Path $env:RUNNER_TEMP 'ayprom-installed-qa'
+          $taskInstaller = (Get-ChildItem release/*Setup*.exe | Select-Object -First 1).FullName
+          $taskProcess = Start-Process -FilePath $taskInstaller -ArgumentList @('/S', "/D=$taskDirectory") -WindowStyle Hidden -PassThru -Wait
+          if ($taskProcess.ExitCode -ne 0) { throw 'Installer failed' }
+          node scripts/qa.mjs "$taskDirectory/AyProm Photo Processor.exe" ".tmp/embedded-fixture/figma-reference.png"
+      - run: node scripts/checksums.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-builds
+          path: |
+            release/*.exe
+            release/*.blockmap
+            release/SHA256SUMS.txt
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qa-evidence
+          include-hidden-files: true
+          path: |
+            .tmp/qa-*/report.json
+            .tmp/qa-*/*.png
+            .tmp/portable-qa-*/report.json
+            .tmp/presets-qa-*/report.json
+            .tmp/regression-*/report.json
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-builds
+          path: artifacts
+      - name: Create draft release with Windows builds
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --draft --title "AyProm Photo Processor $TAG" --notes "Unsigned Windows builds. See README and QA documentation for validation scope."
+          gh release upload "$TAG" artifacts/* --clobber
