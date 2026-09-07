@@ -1,6 +1,22 @@
 # AyProm Photo Processor
 
-Локальное Windows-приложение для приведения товарных фотографий к единому виду. Electron + React + TypeScript + Tailwind + Sharp. Обработка выполняется полностью на устройстве: без аккаунтов, серверов, телеметрии и отправки фотографий.
+[![Скачать установщик для Windows](docs/download-windows.svg)](https://github.com/kwelves/ayprom-app/releases/latest/download/AyProm-Photo-Processor-Setup.exe)
+
+**[Скачать установщик для Windows](https://github.com/kwelves/ayprom-app/releases/latest/download/AyProm-Photo-Processor-Setup.exe)** · [Portable и все выпуски](https://github.com/kwelves/ayprom-app/releases/latest)
+
+Локальная обработка товарных фотографий для Windows 64-bit. Фотографии остаются на вашем компьютере. Аккаунт, Node.js и дополнительные программы не нужны.
+
+## Установка
+
+1. Нажмите зелёную кнопку **«Скачать установщик»** выше.
+2. Откройте скачанный **AyProm-Photo-Processor-Setup.exe** из папки «Загрузки».
+3. Выберите, для кого установить приложение, и папку установки.
+4. Оставьте или снимите галочку **«Создать ярлык на рабочем столе»**.
+5. Нажмите **«Установить»**, дождитесь завершения и запустите приложение на последней странице мастера.
+
+В следующий раз открывайте приложение через ярлык или меню **«Пуск»**. Удаление доступно в параметрах Windows: **«Приложения» → «Установленные приложения»**.
+
+Установщик пока без цифровой подписи, поэтому Windows может показать предупреждение SmartScreen.
 
 ## Возможности
 
@@ -13,15 +29,9 @@
 - Отмена после текущего файла, изоляция ошибок, отчёт и история 30 операций.
 - Светлая, тёмная и системная тема. Presets/settings сохраняются в Electron userData.
 
-## Скачать
+## Portable
 
-Windows Setup и Portable публикуются на [странице Releases](https://github.com/kwelves/ayprom-app/releases). Наличие собранных файлов в локальном release/ не означает, что выпуск уже опубликован.
-
-Setup: запустите AyProm-Photo-Processor-Setup-VERSION.exe, выберите каталог установки в мастере. NSIS создаёт пункт удаления и ярлыки. Node.js, npm и инструменты разработки пользователю не нужны.
-
-Portable: запустите AyProm-Photo-Processor-Portable-VERSION.exe. Установка не требуется; настройки сохраняются в профиле Windows, а не рядом с exe.
-
-Сборки без сертификата не подписаны и могут вызвать предупреждение Windows SmartScreen. Проверяйте источник загрузки; глобально отключать SmartScreen/Defender не требуется.
+Если установка не нужна, скачайте Portable на [странице последнего выпуска](https://github.com/kwelves/ayprom-app/releases/latest) и откройте файл. Настройки сохраняются в профиле Windows.
 
 ## Работа
 
@@ -101,7 +111,7 @@ npm run regression -- "D:/private-real-fixtures"
 
 ## Windows build и release
 
-electron-builder.yml: assisted NSIS (oneClick=false), выбор каталога, Portable, ASAR, native Sharp/@img unpacked. Только Sharp остаётся runtime-зависимостью; UI и Zod включены bundler в код. Development icon — стандартный Electron; для собственного значка положите assets/app.ico и задайте win.icon в electron-builder.yml.
+electron-builder.yml: русскоязычный assisted NSIS (oneClick=false), выбор каталога, галочка ярлыка, запуск после установки, Portable, ASAR, native Sharp/@img unpacked. Только Sharp остаётся runtime-зависимостью; UI и Zod включены bundler в код. Development icon — стандартный Electron; для собственного значка положите assets/app.ico и задайте win.icon в electron-builder.yml.
 
 Workflow .github/workflows/windows.yml проверяет types/tests, собирает app, проверяет dev/unpacked через Electron и собирает Setup/Portable. Теги vX.Y.Z создают draft Release с артефактами. После проверки установленной/portable версии и ознакомления с QA ограничениям draft можно опубликовать. Никакого auto-update в первой версии.
 

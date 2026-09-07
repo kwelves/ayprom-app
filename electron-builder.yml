@@ -25,7 +25,10 @@ nsis:
   allowToChangeInstallationDirectory: true
   createStartMenuShortcut: true
   createDesktopShortcut: true
-  artifactName: AyProm-Photo-Processor-Setup-${version}.${ext}
+  runAfterFinish: true
+  installerLanguages: [ru_RU]
+  include: build/installer.nsh
+  artifactName: AyProm-Photo-Processor-Setup.${ext}
 portable:
   artifactName: AyProm-Photo-Processor-Portable-${version}.${ext}
 publish:

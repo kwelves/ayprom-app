@@ -28,6 +28,7 @@ jobs:
       - run: node scripts/extract-fixture.mjs
       - run: npm run regression -- .tmp/embedded-fixture
       - run: npm run package
+      - run: node scripts/qa-installer.mjs
       - run: node scripts/qa.mjs "release/win-unpacked/AyProm Photo Processor.exe" ".tmp/embedded-fixture/figma-reference.png"
       - shell: pwsh
         run: |
@@ -37,7 +38,7 @@ jobs:
         shell: pwsh
         run: |
           $taskDirectory = Join-Path $env:RUNNER_TEMP 'ayprom-installed-qa'
-          $taskInstaller = (Get-ChildItem release/*Setup*.exe | Select-Object -First 1).FullName
+          $taskInstaller = (Resolve-Path 'release/AyProm-Photo-Processor-Setup.exe').Path
           $taskProcess = Start-Process -FilePath $taskInstaller -ArgumentList @('/S', "/D=$taskDirectory") -WindowStyle Hidden -PassThru -Wait
           if ($taskProcess.ExitCode -ne 0) { throw 'Installer failed' }
           node scripts/qa.mjs "$taskDirectory/AyProm Photo Processor.exe" ".tmp/embedded-fixture/figma-reference.png"
@@ -60,6 +61,7 @@ jobs:
             .tmp/qa-*/*.png
             .tmp/portable-qa-*/report.json
             .tmp/presets-qa-*/report.json
+            .tmp/installer-qa-*/report.json
             .tmp/regression-*/report.json
   release:
     if: startsWith(github.ref, 'refs/tags/v')
