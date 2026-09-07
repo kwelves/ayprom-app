@@ -1,0 +1,35 @@
+appId: com.ayprom.photo-processor
+productName: AyProm Photo Processor
+directories:
+  output: release
+files:
+  - dist/**/*
+  - package.json
+asar: true
+asarUnpack:
+  - node_modules/sharp/**/*
+  - node_modules/@img/**/*
+extraResources:
+  - from: watermark-pattern-figma.svg
+    to: watermark-pattern-figma.svg
+compression: maximum
+npmRebuild: false
+win:
+  target:
+    - nsis
+    - portable
+  executableName: AyProm Photo Processor
+  signExecutable: false
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createStartMenuShortcut: true
+  createDesktopShortcut: true
+  artifactName: AyProm-Photo-Processor-Setup-${version}.${ext}
+portable:
+  artifactName: AyProm-Photo-Processor-Portable-${version}.${ext}
+publish:
+  provider: github
+  owner: kwelves
+  repo: ayprom-app
+  releaseType: draft

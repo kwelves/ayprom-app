@@ -1,0 +1,41 @@
+{
+  "name": "ayprom-photo-processor",
+  "version": "1.0.0",
+  "description": "Local batch product photo processing for Windows",
+  "author": "AyProm",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/main/index.cjs",
+  "scripts": {
+    "dev": "npm run build && electron .",
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "regression": "tsx scripts/regression.ts",
+    "package": "npm run build && electron-builder --win nsis portable --x64 --publish never",
+    "package:dir": "npm run build && electron-builder --win --x64 --dir --publish never"
+  },
+  "dependencies": {
+    "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.5.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "electron": "^44.2.0",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.28.2",
+    "lucide-react": "^1.42.0",
+    "prettier": "^3.9.6",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2",
+    "zod": "^4.5.4"
+  }
+}
