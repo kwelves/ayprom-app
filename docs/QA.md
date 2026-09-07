@@ -5,7 +5,7 @@
 ## Автоматические проверки
 
 - TypeScript strict: без ошибок.
-- 41 тест: 41 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
+- 42 теста: 42 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
 - Production build: успешно. Renderer JS 310 kB, gzip 94.31 kB; CSS 14.14 kB.
 - Preset UI: Duplicate, Rename, Save, Reset, Delete, factory protection, session drafts, keyboard focus trap; полное закрытие/повторный запуск подтверждает сохранение пресета и темы.
 - Electron UI: загрузка renderer, отсутствие Node в renderer, ограниченный preload, папки и recursion, batch → utility → Sharp, preview, latest setting updates, history, 900×650.
@@ -14,6 +14,8 @@
 - Portable launcher реально распаковывается и запускается; отдельный CDP harness проверяет Sharp, SVG, PNG/JPEG/WebP и preview. Прямой electron.launch Playwright с оболочкой Portable не подходит; это ограничение тестового подключения.
 - NSIS silent install завершился кодом 0. app.asar установленной и unpacked-копии имеет одинаковый SHA-256.
 - Установщики НЕ подписаны: Get-AuthenticodeSignature = NotSigned.
+
+Исправление Windows aliases: первый CI выявил обход проверки вложенного output через короткое имя пути. Добавлен сначала падающий тест; после канонизации обеих сторон все 42 теста проходят локально и на GitHub runner.
 
 ## Processing regression
 
@@ -38,10 +40,10 @@ Watermark SHA-256 в source, unpacked resources и installed resources:
 
 | Артефакт                   | Размер, байт |    MiB |
 | -------------------------- | -----------: | -----: |
-| Setup 1.0.0                |    119102243 | 113.58 |
-| Portable 1.0.0             |    118872290 | 113.37 |
-| win-unpacked, сумма файлов |    409800321 | 390.82 |
-| installed-qa, сумма файлов |    409971668 | 390.98 |
+| Setup 1.0.0                |    119102508 | 113.59 |
+| Portable 1.0.0             |    118872549 | 113.37 |
+| win-unpacked, сумма файлов |    409802155 | 390.82 |
+| installed-qa, сумма файлов |    409973502 | 390.98 |
 
 Размер каталога означает сумму файлов, а не выделенные диском кластеры. Кэш пользовательского профиля в эти размеры не входит. Пересборка CI может изменить байты/хэши упаковки; SHA256SUMS.txt сопровождает каждый набор артефактов.
 
