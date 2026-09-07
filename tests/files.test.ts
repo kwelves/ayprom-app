@@ -162,3 +162,27 @@ test("root mapping rejects malicious root label", () => {
   for (const label of ["..", ".", "../escape"])
     assert.throws(() => outputDirectory(root, root, output, label, false));
 });
+
+test("short Windows path aliases cannot hide nested output", async (t) => {
+  const p = await temporary(t),
+    canonical = p + "-long-name";
+  const realpath = fs.realpath;
+  t.mock.method(fs, "realpath", async (target: string) => {
+    const resolved = await realpath(target);
+    return inside(p, resolved)
+      ? path.join(canonical, path.relative(p, resolved))
+      : resolved;
+  });
+  await assert.rejects(
+    validateRoots({
+      roots: [p],
+      output: path.join(p, "not-created", "child"),
+      sameSource: false,
+      force: false,
+      conflict: "skip",
+      processing: STANDARD,
+      export: DEFAULT_EXPORT,
+    }),
+    /отдельную/,
+  );
+});

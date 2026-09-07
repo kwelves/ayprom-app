@@ -166,7 +166,27 @@ export async function assertNoSymlinks(target: string): Promise<void> {
     }
   }
 }
+async function canonicalDestination(target: string): Promise<string> {
+  let current = path.resolve(target);
+  const suffix: string[] = [];
+  for (;;) {
+    try {
+      return path.join(await fs.realpath(current), ...suffix);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
+      const parent = path.dirname(current);
+      if (parent === current) throw error;
+      suffix.unshift(path.basename(current));
+      current = parent;
+    }
+  }
+}
+
 export async function validateRoots(request: BatchRequest): Promise<void> {
+  if (!path.isAbsolute(request.output))
+    throw new Error("Нужен абсолютный путь результата");
+  await assertNoSymlinks(request.output);
+  const resolvedOutput = await canonicalDestination(request.output);
   const seen: string[] = [];
   for (const root of request.roots) {
     if (!path.isAbsolute(root))
@@ -178,7 +198,7 @@ export async function validateRoots(request: BatchRequest): Promise<void> {
     seen.push(resolved);
     if (
       !request.sameSource &&
-      (inside(resolved, request.output) || inside(request.output, resolved))
+      (inside(resolved, resolvedOutput) || inside(resolvedOutput, resolved))
     )
       throw new Error("Выберите отдельную папку результата вне источников");
   }
