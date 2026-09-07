@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { version } from "../../package.json";
 
 export const BRAND = {
   name: "AyProm Photo Processor",
   id: "com.ayprom.photo-processor",
-  version: "1.0.0",
+  version,
 };
 export const processingSchema = z
   .object({

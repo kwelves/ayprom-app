@@ -9,7 +9,7 @@ import {
 } from "electron";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
+import { isTrustedRendererUrl } from "./trusted-renderer";
 import { z } from "zod";
 import {
   BRAND,
@@ -36,11 +36,11 @@ const assetPath = () =>
     ? path.join(process.resourcesPath, "watermark-pattern-figma.svg")
     : path.join(app.getAppPath(), "watermark-pattern-figma.svg");
 function handle(name: string, action: (payload: unknown) => unknown) {
-  ipcMain.handle(name, (event, payload: unknown) => {
+  ipcMain.handle(name, async (event, payload: unknown) => {
     if (
       event.sender !== window.webContents ||
       event.senderFrame !== window.webContents.mainFrame ||
-      event.senderFrame.url !== pathToFileURL(rendererPath).href
+      !(await isTrustedRendererUrl(rendererPath, event.senderFrame.url))
     )
       throw new Error("Недоверенный IPC отправитель");
     return action(payload);
