@@ -1341,7 +1341,6 @@ progress::-webkit-progress-value {
   .brand-type,
   nav button span,
   .privacy-note span,
-  .theme-control select,
   .app-version {
     display: none;
   }
@@ -1361,9 +1360,22 @@ progress::-webkit-progress-value {
     padding: 0;
   }
   .theme-control {
+    position: relative;
     width: 36px;
     justify-content: center;
     padding: 0;
+  }
+  .theme-control select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .theme-control:has(select:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
   }
   .content {
     grid-template-columns: minmax(0, 1fr) 286px;

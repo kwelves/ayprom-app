@@ -18,6 +18,7 @@ let app = await launch();
 const checks = [];
 try {
   let page = await app.firstWindow();
+  await page.setViewportSize({ width: 1024, height: 700 });
   await expect(page.getByLabel("Пресет", { exact: true })).toHaveValue(
     "ayprom-standard",
   );
@@ -74,6 +75,7 @@ try {
   await app.close();
   app = await launch();
   page = await app.firstWindow();
+  await page.setViewportSize({ width: 1024, height: 700 });
   await expect(
     page
       .getByLabel("Пресет", { exact: true })

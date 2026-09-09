@@ -6,7 +6,7 @@
 
 - TypeScript strict: без ошибок.
 - 66 тестов: 66 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, updater state machine и renderer presentation, shutdown lifecycle gate, metadata SHA-512 и packaged GitHub config, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
-- Production build: успешно. Renderer JS 323.01 kB, gzip 97.58 kB; CSS 29.61 kB, gzip 6.84 kB.
+- Production build: успешно. Renderer JS 323.01 kB, gzip 97.58 kB; CSS 29.80 kB, gzip 6.87 kB.
 - Preset UI: Duplicate, Rename, Save, Reset, Delete, factory protection, session drafts, keyboard focus trap; полное закрытие/повторный запуск подтверждает сохранение пресета и темы.
 - Electron UI: загрузка renderer, отсутствие Node в renderer, ограниченный preload, папки и recursion, batch → utility → Sharp, preview, latest setting updates, history, 900×650.
 - Chromium file-backed drag events: одна папка, несколько отдельных файлов; queue remove; кнопка Cancel действительно отменяет очередь.
@@ -42,9 +42,9 @@ Watermark SHA-256 в source, unpacked resources и installed resources:
 
 | Артефакт                   | Размер, байт |    MiB |
 | -------------------------- | -----------: | -----: |
-| Setup 1.1.0                |    119622292 | 114.08 |
-| Portable 1.1.0             |    119433030 | 113.90 |
-| win-unpacked, сумма файлов |    412841228 | 393.72 |
+| Setup 1.1.0                |    119622401 | 114.08 |
+| Portable 1.1.0             |    119433141 | 113.90 |
+| win-unpacked, сумма файлов |    412841411 | 393.72 |
 
 Размер каталога означает сумму файлов, а не выделенные диском кластеры. Кэш пользовательского профиля в эти размеры не входит. Пересборка CI может изменить байты/хэши упаковки; SHA256SUMS.txt сопровождает каждый набор артефактов.
 
