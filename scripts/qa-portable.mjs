@@ -67,6 +67,17 @@ try {
     page.getByRole("heading", { name: "Пакетная обработка" }),
   ).toBeVisible();
   report.checks.push("Actual portable launcher extracted and opened renderer");
+  await expect(
+    page.getByText("Portable-версия обновляется вручную", { exact: true }),
+  ).toBeVisible();
+  const updateState = await page.evaluate(() => window.ayprom.getUpdateState());
+  if (
+    updateState.status !== "unsupported-portable" ||
+    updateState.mode !== "portable" ||
+    updateState.currentVersion !== version
+  )
+    throw Error("Portable updater capability is incorrect");
+  report.checks.push("Portable manual-update mode and version");
   const result = await page.evaluate(
     async ({ source, output, input, canvasWidth }) => {
       const state = await window.ayprom.loadState();

@@ -24,6 +24,10 @@ win:
   executableName: AYPROM
   icon: assets/app.ico
   signExecutable: false
+  # Unsigned bootstrap release: keep SHA-512 metadata verification, but Authenticode
+  # publisher verification cannot succeed until Windows code signing is configured.
+  # TODO(signing): remove this override when an Authenticode certificate is added.
+  verifyUpdateCodeSignature: false
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
@@ -41,4 +45,6 @@ publish:
   provider: github
   owner: kwelves
   repo: ayprom-app
+  protocol: https
+  private: false
   releaseType: draft

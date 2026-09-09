@@ -15,6 +15,7 @@ import {
   SlidersHorizontal,
   Square,
   SunMoon,
+  RefreshCw,
   X,
 } from "lucide-react";
 import {
@@ -26,12 +27,14 @@ import {
   type AppState,
   type ProcessingConfig,
   type Summary,
+  type UpdateState,
 } from "../shared/contracts";
 import { ExportControls } from "./components/ExportControls";
 import { PresetControls } from "./components/PresetControls";
 import { Preview } from "./components/Preview";
 import { ProcessingControls } from "./components/ProcessingControls";
 import { Queue, type QueueJob } from "./components/Queue";
+import { UpdateNotice } from "./components/UpdateNotice";
 
 type Workspace = "batch" | "manual" | "history";
 const workspaceMeta = {
@@ -79,6 +82,11 @@ export function App() {
   const [error, setError] = useState("");
   const [summary, setSummary] = useState<Summary>();
   const [elapsed, setElapsed] = useState(0);
+  const [updateState, setUpdateState] = useState<UpdateState>({
+    status: "idle",
+    mode: "development",
+    currentVersion: BRAND.version,
+  });
   const started = useRef(0);
   const config =
     drafts[selected] ??
@@ -98,6 +106,11 @@ export function App() {
         setLoaded(true);
       })
       .catch(fail);
+  }, []);
+  useEffect(() => {
+    const unsubscribe = window.ayprom.onUpdateState(setUpdateState);
+    void window.ayprom.getUpdateState().then(setUpdateState).catch(fail);
+    return unsubscribe;
   }, []);
   useEffect(() => {
     if (!loaded) return;
@@ -371,7 +384,28 @@ export function App() {
               <option value="dark">Тёмная тема</option>
             </select>
           </label>
-          <span className="app-version">v{BRAND.version}</span>
+          <div className="update-meta">
+            <span className="app-version">
+              Версия {updateState.currentVersion}
+            </span>
+            {updateState.mode === "installed" && (
+              <button
+                className="update-check-button"
+                aria-label="Проверить обновления"
+                title="Проверить обновления"
+                disabled={
+                  updateState.status === "checking" ||
+                  updateState.status === "available" ||
+                  updateState.status === "downloading" ||
+                  updateState.status === "downloaded"
+                }
+                onClick={() => void window.ayprom.checkForUpdates().catch(fail)}
+              >
+                <RefreshCw size={14} />
+                <span>Проверить обновления</span>
+              </button>
+            )}
+          </div>
         </div>
       </aside>
       <div className="workspace">
@@ -410,6 +444,7 @@ export function App() {
             </button>
           </div>
         )}
+        <UpdateNotice state={updateState} processing={busy} onError={fail} />
         <div
           className={`content ${tab === "history" ? "history-content" : ""}`}
         >

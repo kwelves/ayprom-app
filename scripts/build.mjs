@@ -15,7 +15,7 @@ await build({
   platform: "node",
   format: "cjs",
   target: "node22",
-  external: ["electron", "sharp"],
+  external: ["electron", "electron-updater", "sharp"],
   sourcemap: false,
 });
 await viteBuild();

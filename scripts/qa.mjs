@@ -4,6 +4,9 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 const require = createRequire(import.meta.url);
+const version = JSON.parse(
+  await fs.readFile(new URL("../package.json", import.meta.url), "utf8"),
+).version;
 const target = process.argv[2];
 const root = path.resolve(".tmp", "qa-" + Date.now());
 await fs.mkdir(root, { recursive: true });
@@ -27,6 +30,7 @@ else
 await fs.copyFile(photo, path.join(source, "Nested", "second.png"));
 const env = { ...process.env };
 delete env.ELECTRON_RUN_AS_NODE;
+env.AYPROM_DISABLE_UPDATE_CHECK = "1";
 const application = await electron.launch({
   executablePath: target ? path.resolve(target) : require("electron"),
   args: target
@@ -49,6 +53,11 @@ try {
     page.getByRole("heading", { name: "Пакетная обработка" }),
   ).toBeVisible();
   report.checks.push("Renderer loaded");
+  await expect(page.locator(".app-version")).toContainText(`Версия ${version}`);
+  const updateState = await page.evaluate(() => window.ayprom.getUpdateState());
+  if (updateState.currentVersion !== version)
+    throw Error("Updater version does not match package version");
+  report.checks.push("Version and typed updater bridge");
   const security = await page.evaluate(() => ({
     node: typeof window.process,
     bridge: typeof window.ayprom.scan,

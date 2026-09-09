@@ -158,6 +158,62 @@ export type ProgressEvent =
     }
   | { type: "job-completed"; root: string; cancelled: boolean }
   | { type: "completed"; summary: Summary };
+export const updateModeSchema = z.enum([
+  "installed",
+  "portable",
+  "development",
+]);
+export type UpdateMode = z.infer<typeof updateModeSchema>;
+const updateStateBase = {
+  mode: updateModeSchema,
+  currentVersion: z.string().min(1).max(64),
+};
+export const updateStateSchema = z.discriminatedUnion("status", [
+  z.object({ status: z.literal("idle"), ...updateStateBase }).strict(),
+  z.object({ status: z.literal("checking"), ...updateStateBase }).strict(),
+  z.object({ status: z.literal("up-to-date"), ...updateStateBase }).strict(),
+  z
+    .object({
+      status: z.literal("available"),
+      ...updateStateBase,
+      availableVersion: z.string().min(1).max(64),
+    })
+    .strict(),
+  z
+    .object({
+      status: z.literal("downloading"),
+      ...updateStateBase,
+      availableVersion: z.string().min(1).max(64),
+      progress: z.number().min(0).max(100),
+      bytesPerSecond: z.number().nonnegative(),
+      transferred: z.number().nonnegative(),
+      total: z.number().nonnegative(),
+    })
+    .strict(),
+  z
+    .object({
+      status: z.literal("downloaded"),
+      ...updateStateBase,
+      availableVersion: z.string().min(1).max(64),
+    })
+    .strict(),
+  z
+    .object({
+      status: z.literal("error"),
+      ...updateStateBase,
+      error: z.string().min(1).max(500),
+    })
+    .strict(),
+  z
+    .object({
+      status: z.literal("unsupported-portable"),
+      mode: z.literal("portable"),
+      currentVersion: z.string().min(1).max(64),
+    })
+    .strict(),
+]);
+export type UpdateState = z.infer<typeof updateStateSchema>;
+export const updateActionPayloadSchema = z.undefined();
 export const stateSchema = z.object({
   schemaVersion: z.literal(1),
   presets: z.array(presetSchema).max(200),
@@ -197,6 +253,12 @@ export interface DesktopAPI {
   saveState(state: Omit<AppState, "history" | "warning">): Promise<void>;
   openOutput(path: string): Promise<void>;
   copyReport(text: string): Promise<void>;
+  getUpdateState(): Promise<UpdateState>;
+  checkForUpdates(): Promise<UpdateState>;
+  downloadUpdate(): Promise<UpdateState>;
+  installUpdate(): Promise<void>;
+  openUpdateReleases(): Promise<void>;
+  onUpdateState(callback: (state: UpdateState) => void): () => void;
   onProgress(callback: (event: ProgressEvent) => void): () => void;
 }
 export const summarySchema = z.object({

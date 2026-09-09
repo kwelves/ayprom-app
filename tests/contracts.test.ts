@@ -10,6 +10,8 @@ import {
   batchSchema,
   previewSchema,
   presetSchema,
+  updateActionPayloadSchema,
+  updateStateSchema,
 } from "../src/shared/contracts";
 test("factory matches reference", () => {
   assert.deepEqual(STANDARD, {
@@ -122,3 +124,22 @@ test("IPC NUL path rejected", () =>
     }).success,
     false,
   ));
+test("update state rejects internal updater objects", () => {
+  assert.equal(
+    updateStateSchema.safeParse({
+      status: "available",
+      mode: "installed",
+      currentVersion: "1.1.0",
+      availableVersion: "1.1.1",
+      provider: { token: "must-not-cross-IPC" },
+    }).success,
+    false,
+  );
+});
+test("update IPC actions reject renderer payloads", () => {
+  assert.equal(updateActionPayloadSchema.safeParse(undefined).success, true);
+  assert.equal(
+    updateActionPayloadSchema.safeParse("https://example.com").success,
+    false,
+  );
+});

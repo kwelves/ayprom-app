@@ -1,6 +1,6 @@
 {
   "name": "ayprom-photo-processor",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Local batch product photo processing for Windows",
   "author": "AYPROM",
   "license": "MIT",
@@ -13,9 +13,12 @@
     "test": "tsx --test tests/*.test.ts",
     "regression": "tsx scripts/regression.ts",
     "package": "npm run build && electron-builder --win nsis portable --x64 --publish never",
-    "package:dir": "npm run build && electron-builder --win --x64 --dir --publish never"
+    "package:publish": "npm run build && electron-builder --win nsis portable --x64 --publish always",
+    "package:dir": "npm run build && electron-builder --win --x64 --dir --publish never",
+    "verify:update": "tsx scripts/verify-update-metadata.ts"
   },
   "dependencies": {
+    "electron-updater": "^6.8.9",
     "sharp": "^0.35.4"
   },
   "devDependencies": {

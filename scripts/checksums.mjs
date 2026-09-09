@@ -2,9 +2,10 @@ import { createReadStream } from "node:fs";
 import { promises as fs } from "node:fs";
 import { createHash } from "node:crypto";
 import path from "node:path";
-const files = (await fs.readdir("release"))
-    .filter((f) => f.endsWith(".exe"))
-    .sort(),
+const version = JSON.parse(
+    await fs.readFile(new URL("../package.json", import.meta.url), "utf8"),
+  ).version,
+  files = ["AYPROM-Setup.exe", `AYPROM-Portable-${version}.exe`],
   lines = [];
 for (const file of files) {
   const hash = createHash("sha256");

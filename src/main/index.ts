@@ -18,17 +18,21 @@ import {
   previewSchema,
   pathSchema,
   stateSchema,
+  updateActionPayloadSchema,
   type Summary,
   type ScanJob,
 } from "../shared/contracts";
 import { StateStore } from "./store";
 import { runWorker, type RunningWorker } from "./workers";
+import { createUpdater } from "./updater";
+import { LifecycleGate } from "./lifecycle-gate";
 
 app.setName(BRAND.name);
 let window: BrowserWindow;
 let store: StateStore;
 let batch: RunningWorker<Summary> | undefined;
 let preview: RunningWorker<unknown> | undefined;
+const lifecycle = new LifecycleGate();
 const scanning = new Set<RunningWorker<ScanJob[]>>();
 const rendererPath = path.join(__dirname, "../renderer/index.html");
 const assetPath = () =>
@@ -86,6 +90,43 @@ async function main() {
   });
   window.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
   window.webContents.on("will-navigate", (event) => event.preventDefault());
+  const updater = createUpdater({
+    currentVersion: app.getVersion(),
+    isPackaged: app.isPackaged,
+    isProcessing: () => Boolean(batch),
+    beforeInstall: async () => {
+      const [width, height] = window.getSize();
+      await store.save({ ...store.get(), window: { width, height } });
+      await store.flush();
+    },
+    onInstallReady: () => {
+      lifecycle.beginShutdown();
+    },
+    onState: (updateState) => {
+      if (!window.isDestroyed())
+        window.webContents.send("update-state-changed", updateState);
+    },
+  });
+  handle("update-state", (value) => {
+    updateActionPayloadSchema.parse(value);
+    return updater.getState();
+  });
+  handle("update-check", (value) => {
+    updateActionPayloadSchema.parse(value);
+    return updater.checkForUpdates();
+  });
+  handle("update-download", (value) => {
+    updateActionPayloadSchema.parse(value);
+    return updater.downloadUpdate();
+  });
+  handle("update-install", (value) => {
+    updateActionPayloadSchema.parse(value);
+    return updater.installUpdate();
+  });
+  handle("update-open-releases", (value) => {
+    updateActionPayloadSchema.parse(value);
+    return updater.openReleases();
+  });
   handle("inputs", async (value) => {
     const files = z.boolean().optional().parse(value);
     const result = await dialog.showOpenDialog(window, {
@@ -110,6 +151,7 @@ async function main() {
     return result.canceled ? null : result.filePaths[0];
   });
   handle("scan", async (value) => {
+    lifecycle.assertAcceptingWork();
     if (scanning.size >= 2)
       throw new Error("Дождитесь завершения сканирования");
     const worker = runWorker<ScanJob[]>(
@@ -125,6 +167,7 @@ async function main() {
     }
   });
   handle("batch", async (value) => {
+    lifecycle.assertAcceptingWork();
     if (batch) throw new Error("Обработка уже запущена");
     const request = batchSchema.parse(value);
     batch = runWorker<Summary>("batch", request, assetPath(), (event) => {
@@ -140,6 +183,7 @@ async function main() {
   });
   handle("cancel", () => batch?.cancel());
   handle("preview", async (value) => {
+    lifecycle.assertAcceptingWork();
     const request = previewSchema.parse(value);
     preview?.child.kill();
     const worker = runWorker("preview", request, assetPath());
@@ -168,9 +212,8 @@ async function main() {
   handle("copy-report", (value) =>
     clipboard.writeText(z.string().max(1_000_000).parse(value)),
   );
-  let closing = false;
   window.on("close", (event) => {
-    if (closing) return;
+    if (lifecycle.isClosing()) return;
     event.preventDefault();
     void (async () => {
       if (batch) {
@@ -193,12 +236,14 @@ async function main() {
         .save({ ...store.get(), window: { width, height } })
         .catch(console.error);
       await store.flush().catch(console.error);
-      closing = true;
+      lifecycle.beginShutdown();
       window.close();
     })();
   });
   await window.loadFile(rendererPath);
   window.show();
+  if (process.env.AYPROM_DISABLE_UPDATE_CHECK !== "1")
+    setTimeout(() => void updater.checkForUpdates(), 5_000);
 }
 app.on("window-all-closed", () => app.quit());
 void main().catch((error) => {

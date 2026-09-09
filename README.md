@@ -28,10 +28,11 @@
 - Пропуск, уникальное имя или перезапись результатов. Исходники защищены.
 - Отмена после текущего файла, изоляция ошибок, отчёт и история 30 операций.
 - Светлая, тёмная и системная тема. Presets/settings сохраняются в Electron userData.
+- Ненавязчивая проверка обновлений для установленной Setup-версии.
 
 ## Portable
 
-Если установка не нужна, скачайте Portable на [странице последнего выпуска](https://github.com/kwelves/ayprom-app/releases/latest) и откройте файл. Настройки сохраняются в профиле Windows.
+Если установка не нужна, скачайте Portable на [странице последнего выпуска](https://github.com/kwelves/ayprom-app/releases/latest) и откройте файл. Настройки сохраняются в профиле Windows. Portable обновляется вручную; приложение даёт безопасную ссылку на официальную страницу Releases.
 
 ## Работа
 
@@ -89,7 +90,7 @@ CLI ─────────────────────────�
 
 src/shared — схемы Zod, IPC types, presets и branding.
 src/processing — эталонный pipeline, export, scan, mapping, worker.
-src/main — lifecycle, dialogs, валидация IPC, workers, JSON store.
+src/main — lifecycle, dialogs, валидация IPC, workers, updater, JSON store.
 src/preload — ограниченный contextBridge API.
 src/renderer — React, controls, очередь, preview.
 
@@ -111,9 +112,11 @@ npm run regression -- "D:/private-real-fixtures"
 
 ## Windows build и release
 
-electron-builder.yml: русскоязычный assisted NSIS (oneClick=false), выбор каталога, галочка ярлыка, запуск после установки, Portable, ASAR, native Sharp/@img unpacked. Только Sharp остаётся runtime-зависимостью; UI и Zod включены bundler в код. Иконка AYPROM подключена к development BrowserWindow и Windows build.
+electron-builder.yml: русскоязычный assisted NSIS (oneClick=false), выбор каталога, галочка ярлыка, запуск после установки, Portable, ASAR, native Sharp/@img unpacked. Runtime-зависимости — Sharp и electron-updater; UI и Zod включены bundler в код. Иконка AYPROM подключена к development BrowserWindow и Windows build.
 
-Workflow .github/workflows/windows.yml проверяет types/tests, собирает app, проверяет dev/unpacked через Electron и собирает Setup/Portable. Теги vX.Y.Z создают draft Release с артефактами. После проверки установленной/portable версии и ознакомления с QA ограничениям draft можно опубликовать. Никакого auto-update в первой версии.
+Workflow .github/workflows/windows.yml проверяет types/tests, dev/unpacked/installed/Portable и собирает Setup/Portable. Обычные push и pull request не создают выпуск. Тег vX.Y.Z запускает явный electron-builder publish и создаёт только draft Release с Setup, blockmap, `latest.yml`, Portable и SHA256SUMS. Draft публикуется вручную после проверки.
+
+Установленная NSIS-версия проверяет обновление после запуска и по кнопке, но скачивает и перезапускается только по явному действию пользователя. Во время обработки фотографий установка заблокирована. Версия 1.1.0 — bootstrap: переход с v1.0.2 требует ручной установки; автообновление работает начиная с 1.1.0 → 1.1.1+. Подробности: [docs/UPDATES.md](docs/UPDATES.md).
 
 ## Ограничения
 
@@ -121,7 +124,7 @@ Workflow .github/workflows/windows.yml проверяет types/tests, соби�
 - Прозрачный фон должен быть подготовлен заранее; удаления фона и AI нет.
 - Стратегии skip/rename используют hard links для атомарной публикации, поэтому выбирайте NTFS. Неподдерживаемая файловая система выдаст ошибку.
 - Preview сохраняет исходную обработку полного разрешения; большие фотографии и первый рендер watermark могут быть медленными.
-- Auto-update и code signing не включены.
+- Windows-сборки пока не подписаны Authenticode, поэтому SmartScreen может предупреждать. SHA-512 updater metadata и HTTPS остаются включены.
 
 ## License
 

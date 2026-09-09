@@ -1,12 +1,12 @@
-# Проверка версии 1.0.1
+# Проверка версии 1.1.0
 
-Дата: 2026-09-08. Платформа: Windows x64, Node 24.17.0, Electron 44.2.0, Sharp 0.35.4.
+Дата: 2026-09-09. Платформа: Windows x64, Node 24.17.0, Electron 44.2.0, Sharp 0.35.4.
 
 ## Автоматические проверки
 
 - TypeScript strict: без ошибок.
-- 44 теста: 44 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
-- Production build: успешно. Renderer JS 310 kB, gzip 94.31 kB; CSS 14.14 kB.
+- 66 тестов: 66 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, updater state machine и renderer presentation, shutdown lifecycle gate, metadata SHA-512 и packaged GitHub config, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
+- Production build: успешно. Renderer JS 323.01 kB, gzip 97.58 kB; CSS 29.61 kB, gzip 6.84 kB.
 - Preset UI: Duplicate, Rename, Save, Reset, Delete, factory protection, session drafts, keyboard focus trap; полное закрытие/повторный запуск подтверждает сохранение пресета и темы.
 - Electron UI: загрузка renderer, отсутствие Node в renderer, ограниченный preload, папки и recursion, batch → utility → Sharp, preview, latest setting updates, history, 900×650.
 - Chromium file-backed drag events: одна папка, несколько отдельных файлов; queue remove; кнопка Cancel действительно отменяет очередь.
@@ -42,10 +42,9 @@ Watermark SHA-256 в source, unpacked resources и installed resources:
 
 | Артефакт                   | Размер, байт |    MiB |
 | -------------------------- | -----------: | -----: |
-| Setup 1.0.1                |    119102800 | 113.59 |
-| Portable 1.0.1             |    118872753 | 113.37 |
-| win-unpacked, сумма файлов |    409802974 | 390.82 |
-| installed-qa, сумма файлов |    409974367 | 390.98 |
+| Setup 1.1.0                |    119622292 | 114.08 |
+| Portable 1.1.0             |    119433030 | 113.90 |
+| win-unpacked, сумма файлов |    412841228 | 393.72 |
 
 Размер каталога означает сумму файлов, а не выделенные диском кластеры. Кэш пользовательского профиля в эти размеры не входит. Пересборка CI может изменить байты/хэши упаковки; SHA256SUMS.txt сопровождает каждый набор артефактов.
 
@@ -57,6 +56,6 @@ Watermark SHA-256 в source, unpacked resources и installed resources:
 - Windows x64 подтверждён на текущей машине; Windows ARM, macOS/Linux не проверялись.
 - Первая растеризация большого SVG занимает заметное время. Кэш снижает повторные расходы; весь original enhancement остаётся полноразмерным.
 - Hard-link publication в Skip/Rename требует подходящей файловой системы (NTFS). ExFAT/network shares отдельно не проверялись.
-- Иконка пока стандартная Electron. Code signing и auto-update отсутствуют.
+- Иконка AYPROM встроена в executable и NSIS. Authenticode пока отсутствует; updater использует HTTPS и SHA-512 metadata, а Portable обновляется вручную.
 
 История прежних временных ошибок не является статусом финальной сборки. Финальные отчёты хранятся локально под .tmp; GitHub workflow прикладывает воспроизводимые QA-артефакты.
