@@ -29,7 +29,7 @@ export async function assertWatermark(asset: string): Promise<void> {
     await fs.access(asset);
   } catch {
     throw new Error(
-      "Не найден watermark-pattern-figma.svg. Для AyProm Standard нужен оригинальный Figma asset.",
+      "Не найден watermark-pattern-figma.svg. Для AYPROM Standard нужен оригинальный Figma asset.",
     );
   }
 }

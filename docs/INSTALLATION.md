@@ -1,7 +1,7 @@
 # Установка версии 1.0.2
 
 В начале README размещена кнопка прямого скачивания:
-https://github.com/kwelves/ayprom-app/releases/latest/download/AyProm-Photo-Processor-Setup.exe
+https://github.com/kwelves/ayprom-app/releases/latest/download/AYPROM-Setup.exe
 
 У Setup постоянное имя, поэтому кнопка следует за последним опубликованным релизом. Portable остаётся дополнительным вариантом на странице Releases.
 

@@ -29,7 +29,7 @@ jobs:
       - run: npm run regression -- .tmp/embedded-fixture
       - run: npm run package
       - run: node scripts/qa-installer.mjs
-      - run: node scripts/qa.mjs "release/win-unpacked/AyProm Photo Processor.exe" ".tmp/embedded-fixture/figma-reference.png"
+      - run: node scripts/qa.mjs "release/win-unpacked/AYPROM.exe" ".tmp/embedded-fixture/figma-reference.png"
       - shell: pwsh
         run: |
           $taskPortable = (Get-ChildItem release/*Portable*.exe | Select-Object -First 1).FullName
@@ -38,10 +38,10 @@ jobs:
         shell: pwsh
         run: |
           $taskDirectory = Join-Path $env:RUNNER_TEMP 'ayprom-installed-qa'
-          $taskInstaller = (Resolve-Path 'release/AyProm-Photo-Processor-Setup.exe').Path
+          $taskInstaller = (Resolve-Path 'release/AYPROM-Setup.exe').Path
           $taskProcess = Start-Process -FilePath $taskInstaller -ArgumentList @('/S', "/D=$taskDirectory") -WindowStyle Hidden -PassThru -Wait
           if ($taskProcess.ExitCode -ne 0) { throw 'Installer failed' }
-          node scripts/qa.mjs "$taskDirectory/AyProm Photo Processor.exe" ".tmp/embedded-fixture/figma-reference.png"
+          node scripts/qa.mjs "$taskDirectory/AYPROM.exe" ".tmp/embedded-fixture/figma-reference.png"
       - run: node scripts/checksums.mjs
       - uses: actions/upload-artifact@v4
         with:
@@ -80,5 +80,5 @@ jobs:
           GH_REPO: ${{ github.repository }}
           TAG: ${{ github.ref_name }}
         run: |
-          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --draft --title "AyProm Photo Processor $TAG" --notes "Unsigned Windows builds. See README and QA documentation for validation scope."
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --draft --title "AYPROM $TAG" --notes "Unsigned Windows builds. See README and QA documentation for validation scope."
           gh release upload "$TAG" artifacts/* --clobber

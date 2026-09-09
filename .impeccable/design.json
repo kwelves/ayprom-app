@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-09T00:00:00.000Z",
+  "title": "Design System: AYPROM",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "AYPROM Teal",
+        "canonical": "#087c72",
+        "tonalRamp": [
+          "#07302d",
+          "#075048",
+          "#087c72",
+          "#34a69b",
+          "#55c9bb",
+          "#8ce0d6",
+          "#c5f0eb",
+          "#eefaf8"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Cool Canvas",
+        "canonical": "#eef1f3",
+        "tonalRamp": [
+          "#172022",
+          "#293437",
+          "#465355",
+          "#647276",
+          "#879397",
+          "#bcc7ca",
+          "#d7dde0",
+          "#f7f8f9"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Workspace title",
+        "purpose": "Compact mode headings."
+      },
+      "body": {
+        "displayName": "Interface body",
+        "purpose": "Controls and operational copy."
+      }
+    },
+    "shadows": [
+      {
+        "name": "float",
+        "value": "0 16px 40px rgba(27,40,43,0.16)",
+        "purpose": "Modal surfaces only."
+      }
+    ],
+    "motion": [
+      {
+        "name": "fast",
+        "value": "110ms cubic-bezier(0.2,0,0,1)",
+        "purpose": "Hover and press feedback."
+      },
+      {
+        "name": "normal",
+        "value": "180ms cubic-bezier(0.16,1,0.3,1)",
+        "purpose": "Workspace, queue and message state changes."
+      }
+    ],
+    "breakpoints": [
+      { "name": "compact-rail", "value": "1150px" },
+      { "name": "minimum-window", "value": "960px" }
+    ]
+  },
+  "components": [],
+  "narrative": {
+    "northStar": "The Photographic Light Table",
+    "overview": "A calm, technical Windows workspace with neutral planes, precise dividers, compact controls and a single teal accent.",
+    "keyCharacteristics": [
+      "Operational density",
+      "Purposeful motion",
+      "Distinct light and dark themes"
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "Teal identifies agency and state, never decoration.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do keep the processing action visible and singular.",
+      "Do use tabular figures for progress and counts."
+    ],
+    "donts": [
+      "Don't add gradients, glow, glass panels or decorative loops.",
+      "Don't animate layout for large lists."
+    ]
+  }
+}

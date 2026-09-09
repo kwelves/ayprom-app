@@ -45,7 +45,9 @@ const report = {
 try {
   const page = await application.firstWindow();
   page.on("pageerror", (e) => report.errors.push(String(e)));
-  await expect(page.getByText("Единый стиль. Вся коллекция.")).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Пакетная обработка" }),
+  ).toBeVisible();
   report.checks.push("Renderer loaded");
   const security = await page.evaluate(() => ({
     node: typeof window.process,
@@ -63,9 +65,7 @@ try {
       filePaths: [source],
     });
   }, source);
-  await page
-    .getByRole("button", { name: "Выбрать папки", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Добавить", exact: true }).click();
   await expect(page.getByText("2 изображений", { exact: false })).toBeVisible({
     timeout: 30000,
   });
@@ -92,7 +92,9 @@ try {
     path: path.join(root, "light-queue.png"),
     fullPage: true,
   });
-  await page.getByRole("button", { name: "Обработать", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Запустить обработку", exact: true })
+    .click();
   await expect(
     page.getByRole("heading", { name: "Обработка завершена", exact: true }),
   ).toBeVisible({ timeout: 180000 });
@@ -123,9 +125,9 @@ try {
   );
   report.checks.push("Latest preview after rapid setting updates");
   await page.getByRole("button", { name: "История", exact: true }).click();
-  await expect(
-    page.getByText("2 обработано · 0 пропущено · 0 ошибок"),
-  ).toBeVisible();
+  await expect(page.locator(".history-counts").first()).toContainText(
+    "2 готово",
+  );
   report.checks.push("Session history");
   const profile = await application.evaluate(({ app }) =>
     app.getPath("userData"),
@@ -180,8 +182,10 @@ try {
     page.getByRole("button", { name: "Убрать second.png", exact: true }),
   ).toBeVisible({ timeout: 30000 });
   report.checks.push("Multiple file drop and queue removal");
-  await page.getByRole("button", { name: "Обработать", exact: true }).click();
-  await page.getByRole("button", { name: "Отменить", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Запустить обработку", exact: true })
+    .click();
+  await page.getByRole("button", { name: "Остановить", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Обработка отменена", exact: true }),
   ).toBeVisible({ timeout: 180000 });

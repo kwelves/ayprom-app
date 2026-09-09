@@ -2,7 +2,7 @@
   "name": "ayprom-photo-processor",
   "version": "1.0.2",
   "description": "Local batch product photo processing for Windows",
-  "author": "AyProm",
+  "author": "AYPROM",
   "license": "MIT",
   "type": "module",
   "main": "dist/main/index.cjs",

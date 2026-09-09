@@ -2,7 +2,7 @@ import { z } from "zod";
 import { version } from "../../package.json";
 
 export const BRAND = {
-  name: "AyProm Photo Processor",
+  name: "AYPROM",
   id: "com.ayprom.photo-processor",
   version,
 };
@@ -72,7 +72,7 @@ export type ProcessingPreset = z.infer<typeof presetSchema>;
 export const factoryPreset = (): ProcessingPreset => ({
   schemaVersion: 1,
   id: "ayprom-standard",
-  name: "AyProm Standard",
+  name: "AYPROM Standard",
   builtIn: true,
   processing: structuredClone(STANDARD),
   createdAt: "2026-09-08T00:00:00.000Z",

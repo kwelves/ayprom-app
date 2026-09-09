@@ -11,7 +11,7 @@ npm test
 npm run build
 node scripts/qa.mjs
 npm run package
-node scripts/qa.mjs "release/win-unpacked/AyProm Photo Processor.exe"
+node scripts/qa.mjs "release/win-unpacked/AYPROM.exe"
 ```
 
 При изменениях processing используйте реальные локальные fixtures и npm run regression -- <folder>. Сверяйте decoded RGBA, а не только байты PNG. Синтетические тесты не заменяют фото.

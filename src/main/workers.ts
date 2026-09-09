@@ -16,7 +16,7 @@ export function runWorker<T>(
     path.join(__dirname, "../processing/worker.cjs"),
     [],
     {
-      serviceName: `AyProm ${kind}`,
+      serviceName: `AYPROM ${kind}`,
       stdio: "pipe",
       env: {
         ...process.env,

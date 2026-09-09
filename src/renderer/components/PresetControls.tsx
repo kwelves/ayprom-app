@@ -135,7 +135,7 @@ export function PresetControls({
         </button>
         <button
           title="Дублировать"
-          onClick={() => open("create", `${current.name} — копия`)}
+          onClick={() => open("create", `${current.name} (копия)`)}
         >
           <Copy size={14} />
         </button>

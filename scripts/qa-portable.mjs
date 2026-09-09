@@ -7,7 +7,7 @@ const version = JSON.parse(
   await fs.readFile(new URL("../package.json", import.meta.url), "utf8"),
 ).version;
 const executable = path.resolve(
-  process.argv[2] ?? `release/AyProm-Photo-Processor-Portable-${version}.exe`,
+  process.argv[2] ?? `release/AYPROM-Portable-${version}.exe`,
 );
 const root = path.resolve(".tmp", "portable-qa-" + Date.now()),
   profile = path.join(root, "profile"),
@@ -64,7 +64,7 @@ try {
   const page = context.pages()[0] ?? (await context.waitForEvent("page"));
   page.on("pageerror", (error) => report.errors.push(String(error)));
   await expect(
-    page.getByRole("heading", { name: "Единый стиль. Вся коллекция." }),
+    page.getByRole("heading", { name: "Пакетная обработка" }),
   ).toBeVisible();
   report.checks.push("Actual portable launcher extracted and opened renderer");
   const result = await page.evaluate(

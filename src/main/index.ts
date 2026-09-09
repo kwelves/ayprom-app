@@ -35,6 +35,10 @@ const assetPath = () =>
   app.isPackaged
     ? path.join(process.resourcesPath, "watermark-pattern-figma.svg")
     : path.join(app.getAppPath(), "watermark-pattern-figma.svg");
+const iconPath = () =>
+  app.isPackaged
+    ? path.join(process.resourcesPath, "app-icon.png")
+    : path.join(app.getAppPath(), "assets", "app-icon.png");
 function handle(name: string, action: (payload: unknown) => unknown) {
   ipcMain.handle(name, async (event, payload: unknown) => {
     if (
@@ -68,6 +72,7 @@ async function main() {
     minWidth: 900,
     minHeight: 650,
     title: BRAND.name,
+    icon: iconPath(),
     backgroundColor: "#11151b",
     show: false,
     autoHideMenuBar: true,

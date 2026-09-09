@@ -1,15 +1,15 @@
-# AyProm Photo Processor
+# AYPROM
 
-[![Скачать установщик для Windows](docs/download-windows.svg)](https://github.com/kwelves/ayprom-app/releases/latest/download/AyProm-Photo-Processor-Setup.exe)
+[![Скачать установщик для Windows](docs/download-windows.svg)](https://github.com/kwelves/ayprom-app/releases/latest/download/AYPROM-Setup.exe)
 
-**[Скачать установщик для Windows](https://github.com/kwelves/ayprom-app/releases/latest/download/AyProm-Photo-Processor-Setup.exe)** · [Portable и все выпуски](https://github.com/kwelves/ayprom-app/releases/latest)
+**[Скачать установщик для Windows](https://github.com/kwelves/ayprom-app/releases/latest/download/AYPROM-Setup.exe)** · [Portable и все выпуски](https://github.com/kwelves/ayprom-app/releases/latest)
 
 Локальная обработка товарных фотографий для Windows 64-bit. Фотографии остаются на вашем компьютере. Аккаунт, Node.js и дополнительные программы не нужны.
 
 ## Установка
 
 1. Нажмите зелёную кнопку **«Скачать установщик»** выше.
-2. Откройте скачанный **AyProm-Photo-Processor-Setup.exe** из папки «Загрузки».
+2. Откройте скачанный **AYPROM-Setup.exe** из папки «Загрузки».
 3. Выберите, для кого установить приложение, и папку установки.
 4. Оставьте или снимите галочку **«Создать ярлык на рабочем столе»**.
 5. Нажмите **«Установить»**, дождитесь завершения и запустите приложение на последней странице мастера.
@@ -21,7 +21,7 @@
 ## Возможности
 
 - Очередь нескольких папок, drag & drop папок и изображений, рекурсивное сканирование.
-- Встроенный AyProm Standard и пользовательские пресеты: создание, дублирование, переименование, сохранение, сброс.
+- Встроенный AYPROM Standard и пользовательские пресеты: создание, дублирование, переименование, сохранение, сброс.
 - Ручная настройка реальных параметров движка и автоматическое сравнение до/после.
 - PNG, JPEG с выбранным фоном, WebP с прозрачностью и режимом без потерь.
 - Отдельная папка результата с сохранением структуры; опционально сохранение рядом с источником.
@@ -36,7 +36,7 @@
 ## Работа
 
 1. Добавьте папки.
-2. Выберите AyProm Standard или свой пресет.
+2. Выберите AYPROM Standard или свой пресет.
 3. Выберите отдельную папку результата.
 4. Выберите PNG, JPEG или WebP.
 5. Нажмите «Обработать».
@@ -63,7 +63,7 @@ npm run build
 npm run package:dir
 npm run package
 node scripts/qa.mjs
-node scripts/qa.mjs "release/win-unpacked/AyProm Photo Processor.exe"
+node scripts/qa.mjs "release/win-unpacked/AYPROM.exe"
 ```
 
 UI QA использует настоящие Electron main/preload/utility/Sharp; ответы выбора папок подставляет тест. Это не проверка взаимодействия человека с native dialog или реального OS drag gesture. Синтетические файлы и скриншоты остаются в игнорируемой .tmp/.
@@ -107,11 +107,11 @@ watermark-pattern-figma.svg — обязательный оригинальны�
 npm run regression -- "D:/private-real-fixtures"
 ```
 
-Отдельные реальные фотографии не коммитятся. В исходном SVG обнаружено встроенное фото деталей: node scripts/extract-fixture.mjs извлекает его в .tmp. На этом фото 2491×1875 исходный CLI и новый AyProm Standard дали одинаковые decoded RGBA. Подробные результаты и границы: [docs/QA.md](docs/QA.md).
+Отдельные реальные фотографии не коммитятся. В исходном SVG обнаружено встроенное фото деталей: node scripts/extract-fixture.mjs извлекает его в .tmp. На этом фото 2491×1875 исходный CLI и новый AYPROM Standard дали одинаковые decoded RGBA. Подробные результаты и границы: [docs/QA.md](docs/QA.md).
 
 ## Windows build и release
 
-electron-builder.yml: русскоязычный assisted NSIS (oneClick=false), выбор каталога, галочка ярлыка, запуск после установки, Portable, ASAR, native Sharp/@img unpacked. Только Sharp остаётся runtime-зависимостью; UI и Zod включены bundler в код. Development icon — стандартный Electron; для собственного значка положите assets/app.ico и задайте win.icon в electron-builder.yml.
+electron-builder.yml: русскоязычный assisted NSIS (oneClick=false), выбор каталога, галочка ярлыка, запуск после установки, Portable, ASAR, native Sharp/@img unpacked. Только Sharp остаётся runtime-зависимостью; UI и Zod включены bundler в код. Иконка AYPROM подключена к development BrowserWindow и Windows build.
 
 Workflow .github/workflows/windows.yml проверяет types/tests, собирает app, проверяет dev/unpacked через Electron и собирает Setup/Portable. Теги vX.Y.Z создают draft Release с артефактами. После проверки установленной/portable версии и ознакомления с QA ограничениям draft можно опубликовать. Никакого auto-update в первой версии.
 
@@ -125,4 +125,4 @@ Workflow .github/workflows/windows.yml проверяет types/tests, соби�
 
 ## License
 
-MIT. См. LICENSE. Название AyProm и фирменный watermark остаются идентификаторами бренда; лицензия кода не предоставляет права выдавать сторонний продукт за официальный.
+MIT. См. LICENSE. Название AYPROM и фирменный watermark остаются идентификаторами бренда; лицензия кода не предоставляет права выдавать сторонний продукт за официальный.

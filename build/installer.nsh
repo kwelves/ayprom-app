@@ -20,13 +20,13 @@ Var ayPromShortcutPageShown
 
 ; Expand functions here, after electron-builder has loaded MUI and plugins.
 !macro customPageAfterChangeDir
-  Page custom AyPromShortcutPageCreate AyPromShortcutPageLeave
+  Page custom AYPROMShortcutPageCreate AYPROMShortcutPageLeave
 
-  Function AyPromShortcutPageCreate
+  Function AYPROMShortcutPageCreate
     ${If} ${isUpdated}
       Abort
     ${EndIf}
-    !insertmacro MUI_HEADER_TEXT "Ярлык приложения" "Выберите, как открывать AyProm Photo Processor."
+    !insertmacro MUI_HEADER_TEXT "Ярлык приложения" "Выберите, как открывать AYPROM."
     nsDialogs::Create 1018
     Pop $0
     ${If} $0 == error
@@ -41,7 +41,7 @@ Var ayPromShortcutPageShown
     nsDialogs::Show
   FunctionEnd
 
-  Function AyPromShortcutPageLeave
+  Function AYPROMShortcutPageLeave
     ${NSD_GetState} $ayPromShortcutCheckbox $ayPromDesktopShortcut
   FunctionEnd
 !macroend

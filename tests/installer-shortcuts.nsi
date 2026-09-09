@@ -1,14 +1,14 @@
 Unicode true
 RequestExecutionLevel user
 SilentInstall silent
-Name "AyProm shortcut QA"
+Name "AYPROM shortcut QA"
 OutFile "${QA_OUTPUT}"
 !addincludedir "${QA_INCLUDES}"
 !addplugindir /x86-unicode "${QA_PLUGINS}"
 !include MUI2.nsh
 !include StdUtils.nsh
 !define APP_ID "com.ayprom.photo-processor.qa"
-!define APP_DESCRIPTION "AyProm isolated shortcut QA"
+!define APP_DESCRIPTION "AYPROM isolated shortcut QA"
 !define isUpdated `0 == 1`
 !define isNoDesktopShortcut `0 == 1`
 Var newDesktopLink

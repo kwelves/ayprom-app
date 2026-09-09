@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ImagePlus } from "lucide-react";
+import { ImagePlus, ScanLine } from "lucide-react";
 import {
   processingSchema,
   exportSchema,
@@ -11,11 +11,13 @@ export function Preview({
   config,
   settings,
   choose,
+  compact = false,
 }: {
   input: string;
   config: ProcessingConfig;
   settings: ExportSettings;
   choose(): void;
+  compact?: boolean;
 }) {
   const [images, setImages] = useState<{ before: string; after: string }>();
   const [status, setStatus] = useState("");
@@ -34,7 +36,7 @@ export function Preview({
       setImages(undefined);
       return;
     }
-    setStatus("Обновление…");
+    setStatus("Готовим черновик…");
     const run = async () => {
       try {
         const fast = await window.ayprom.preview({
@@ -46,7 +48,7 @@ export function Preview({
         });
         if (disposed || generation.current !== requestId) return;
         setImages(fast);
-        setStatus("Быстрый просмотр · уточнение…");
+        setStatus("Уточняем качество…");
         const result = await window.ayprom.preview({
           input,
           processing: config,
@@ -73,26 +75,34 @@ export function Preview({
     };
   }, [input, config, settings]);
   return (
-    <section className="preview">
+    <section className={`preview ${compact ? "preview-compact" : ""}`}>
       <div className="section-title">
         <div>
-          <h2>До и после</h2>
+          <h2>{compact ? "Контроль результата" : "До и после"}</h2>
           <p className="muted truncate" title={input}>
             {input || "Выберите изображение для настройки"}
           </p>
         </div>
         <button onClick={choose}>
           <ImagePlus size={16} />
-          Выбрать фото
+          {compact ? "Другое фото" : "Выбрать фото"}
         </button>
       </div>
       {!input ? (
         <div className="preview-empty">
-          <ImagePlus size={42} />
-          <h3>Настройте результат на одном фото</h3>
-          <p>Изменения автоматически появятся здесь.</p>
+          <ScanLine size={34} />
+          <h3>
+            {compact
+              ? "Нет доступного предпросмотра"
+              : "Выберите контрольное фото"}
+          </h3>
+          <p>
+            {compact
+              ? "В источнике не найдено подходящее изображение."
+              : "Изменения появятся здесь автоматически."}
+          </p>
           <button className="primary" onClick={choose}>
-            Выбрать изображение
+            Выбрать фото
           </button>
         </div>
       ) : (
@@ -116,9 +126,15 @@ export function Preview({
               </div>
             ))}
           </div>
-          <p aria-live="polite" className="muted text-xs">
-            {status} · Шахматная сетка показывает прозрачность и не сохраняется
-            в файл.
+          <p aria-live="polite" className="preview-status">
+            <span
+              className={
+                status && status !== "Полное качество"
+                  ? "busy-indicator"
+                  : "ready-indicator"
+              }
+            />
+            {status}. Сетка обозначает прозрачность и не попадёт в файл.
           </p>
           {error && (
             <p role="alert" className="error">

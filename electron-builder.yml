@@ -1,9 +1,10 @@
 appId: com.ayprom.photo-processor
-productName: AyProm Photo Processor
+productName: AYPROM
 directories:
   output: release
 files:
   - dist/**/*
+  - assets/app-icon.png
   - package.json
 asar: true
 asarUnpack:
@@ -12,13 +13,16 @@ asarUnpack:
 extraResources:
   - from: watermark-pattern-figma.svg
     to: watermark-pattern-figma.svg
+  - from: assets/app-icon.png
+    to: app-icon.png
 compression: maximum
 npmRebuild: false
 win:
   target:
     - nsis
     - portable
-  executableName: AyProm Photo Processor
+  executableName: AYPROM
+  icon: assets/app.ico
   signExecutable: false
 nsis:
   oneClick: false
@@ -28,9 +32,11 @@ nsis:
   runAfterFinish: true
   installerLanguages: [ru_RU]
   include: build/installer.nsh
-  artifactName: AyProm-Photo-Processor-Setup.${ext}
+  installerIcon: assets/app.ico
+  uninstallerIcon: assets/app.ico
+  artifactName: AYPROM-Setup.${ext}
 portable:
-  artifactName: AyProm-Photo-Processor-Portable-${version}.${ext}
+  artifactName: AYPROM-Portable-${version}.${ext}
 publish:
   provider: github
   owner: kwelves
