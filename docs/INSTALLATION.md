@@ -13,7 +13,7 @@ https://github.com/kwelves/ayprom-app/releases/latest/download/AYPROM-Setup.exe
 
 ## Проверки
 
-- Typecheck и 66 тестов приложения проходят.
+- Typecheck и 67 тестов приложения проходят.
 - Setup и Portable успешно собраны с новым NSIS include.
 - `node scripts/qa-installer.mjs` компилирует тот же NSIS include и проверяет реальные операции с .lnk в отдельной .tmp-папке: включённое и выключенное состояния, CLI-флаг, переустановку и сохранение ярлыков при silent update. Пользовательский рабочий стол этим тестом не меняется.
 - CI повторяет эту проверку, устанавливает полный Setup и проверяет установленное приложение через Electron UI harness. Результаты прикладываются к workflow.

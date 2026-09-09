@@ -5,7 +5,7 @@
 ## Автоматические проверки
 
 - TypeScript strict: без ошибок.
-- 66 тестов: 66 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, updater state machine и renderer presentation, shutdown lifecycle gate, metadata SHA-512 и packaged GitHub config, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
+- 67 тестов: 67 passed, 0 failed. Preset validation/serialization/version, export/IPC validation, updater state machine и renderer presentation, shutdown lifecycle gate, metadata SHA-512, packaged GitHub config и release workflow ordering, sorting/extensions/numeric force, recursion/mapping, conflicts, source preservation, cancellation, PNG/JPEG/WebP, corrupt store recovery.
 - Production build: успешно. Renderer JS 323.01 kB, gzip 97.58 kB; CSS 29.80 kB, gzip 6.87 kB.
 - Preset UI: Duplicate, Rename, Save, Reset, Delete, factory protection, session drafts, keyboard focus trap; полное закрытие/повторный запуск подтверждает сохранение пресета и темы.
 - Electron UI: загрузка renderer, отсутствие Node в renderer, ограниченный preload, папки и recursion, batch → utility → Sharp, preview, latest setting updates, history, 900×650.

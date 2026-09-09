@@ -15,7 +15,7 @@ AYPROM использует `electron-updater`, NSIS и публичные GitHu
 1. Обычные push/PR проходят verification без GitHub Release.
 2. Версия в `package.json` должна совпадать с тегом `vX.Y.Z`.
 3. Tag workflow вызывает `electron-builder --publish always` с временным `GH_TOKEN` GitHub Actions.
-4. Electron-builder из одной сборки создаёт Setup, blockmap и `latest.yml` и загружает их вместе с Portable в draft Release.
+4. Workflow заранее создаёт один draft Release, затем electron-builder из одной сборки создаёт Setup, blockmap и `latest.yml` и загружает их вместе с Portable в этот draft.
 5. CI сверяет version, имя installer и SHA-512 из `latest.yml`, проверяет unpacked/installed/Portable и добавляет `SHA256SUMS.txt`.
 6. Draft остаётся невидимым для updater до ручной публикации.
 

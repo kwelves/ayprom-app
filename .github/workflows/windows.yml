@@ -88,6 +88,16 @@ jobs:
           if ($env:GITHUB_REF_NAME -ne "v$taskVersion") {
             throw "Tag $env:GITHUB_REF_NAME does not match package version $taskVersion"
           }
+      - name: Create single draft release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $taskVersion = (Get-Content package.json | ConvertFrom-Json).version
+          gh release view $env:GITHUB_REF_NAME *> $null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create $env:GITHUB_REF_NAME --draft --title "AYPROM $taskVersion" --notes "Unsigned Windows bootstrap release. Review CI evidence and docs/UPDATES.md before manually publishing this draft."
+          }
       - name: Build and upload electron-builder draft
         env:
           GH_TOKEN: ${{ github.token }}
