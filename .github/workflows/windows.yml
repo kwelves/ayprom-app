@@ -5,6 +5,11 @@ on:
     tags: ["v*.*.*"]
   pull_request:
   workflow_dispatch:
+    inputs:
+      release:
+        description: "Create a draft release v<package.json version> from main"
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -66,7 +71,12 @@ jobs:
             .tmp/installer-qa-*/report.json
             .tmp/regression-*/report.json
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    # Tag pushes release as before. A manual run from main with `release`
+    # checked creates the same draft; publishing it creates the tag.
+    if: >-
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'workflow_dispatch' && inputs.release &&
+      github.ref == 'refs/heads/main')
     needs: verify
     runs-on: windows-latest
     timeout-minutes: 45
@@ -81,37 +91,65 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Verify tag matches package version
-        shell: pwsh
-        run: |
-          $taskVersion = (Get-Content package.json | ConvertFrom-Json).version
-          if ($env:GITHUB_REF_NAME -ne "v$taskVersion") {
-            throw "Tag $env:GITHUB_REF_NAME does not match package version $taskVersion"
-          }
-      - name: Create single draft release
+      - name: Resolve release tag
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           $taskVersion = (Get-Content package.json | ConvertFrom-Json).version
-          gh release view $env:GITHUB_REF_NAME *> $null
+          $taskTag = "v$taskVersion"
+          if ($env:GITHUB_REF_TYPE -eq 'tag') {
+            if ($env:GITHUB_REF_NAME -ne $taskTag) {
+              throw "Tag $env:GITHUB_REF_NAME does not match package version $taskVersion"
+            }
+          } else {
+            git ls-remote --exit-code --tags origin "refs/tags/$taskTag" *> $null
+            if ($LASTEXITCODE -eq 0) {
+              throw "Tag $taskTag already exists; bump package.json before a manual release"
+            }
+          }
+          "RELEASE_TAG=$taskTag" >> $env:GITHUB_ENV
+          # Publishing a manual-run draft creates the tag and re-triggers this
+          # workflow. A release that is already public is left untouched.
+          $taskState = gh release view $taskTag --json isDraft 2>$null | ConvertFrom-Json
+          if ($taskState -and -not $taskState.isDraft) {
+            Write-Host "Release $taskTag is already published; nothing to do."
+            "RELEASE_PUBLISHED=true" >> $env:GITHUB_ENV
+          }
+          # gh/git probes above may leave a non-zero exit code by design.
+          exit 0
+      - name: Create single draft release
+        if: env.RELEASE_PUBLISHED != 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $taskVersion = (Get-Content package.json | ConvertFrom-Json).version
+          gh release view $env:RELEASE_TAG *> $null
           if ($LASTEXITCODE -ne 0) {
-            gh release create $env:GITHUB_REF_NAME --draft --title "AYPROM $taskVersion" --notes "Unsigned Windows bootstrap release. Review CI evidence and docs/UPDATES.md before manually publishing this draft."
+            gh release create $env:RELEASE_TAG --draft --target $env:GITHUB_SHA --title "AYPROM $taskVersion" --notes "Unsigned Windows bootstrap release. Review CI evidence and docs/UPDATES.md before manually publishing this draft."
           }
       - name: Build and upload electron-builder draft
+        if: env.RELEASE_PUBLISHED != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: npm run package:publish
       - run: npm run verify:update
+        if: env.RELEASE_PUBLISHED != 'true'
       - run: node scripts/qa-installer.mjs
+        if: env.RELEASE_PUBLISHED != 'true'
       - run: node scripts/extract-fixture.mjs
+        if: env.RELEASE_PUBLISHED != 'true'
       - run: node scripts/qa.mjs "release/win-unpacked/AYPROM.exe" ".tmp/embedded-fixture/figma-reference.png"
+        if: env.RELEASE_PUBLISHED != 'true'
       - name: Verify release Portable
+        if: env.RELEASE_PUBLISHED != 'true'
         shell: pwsh
         run: |
           $taskPortable = (Get-ChildItem release/*Portable*.exe | Select-Object -First 1).FullName
           node scripts/qa-portable.mjs "$taskPortable" ".tmp/embedded-fixture/figma-reference.png"
       - name: Verify release NSIS installation
+        if: env.RELEASE_PUBLISHED != 'true'
         shell: pwsh
         run: |
           $taskDirectory = Join-Path $env:RUNNER_TEMP 'ayprom-release-installed-qa'
@@ -120,15 +158,17 @@ jobs:
           if ($taskProcess.ExitCode -ne 0) { throw 'Installer failed' }
           node scripts/qa.mjs "$taskDirectory/AYPROM.exe" ".tmp/embedded-fixture/figma-reference.png"
       - run: node scripts/checksums.mjs
+        if: env.RELEASE_PUBLISHED != 'true'
       - name: Attach checksums and verify draft assets
+        if: env.RELEASE_PUBLISHED != 'true'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           $taskVersion = (Get-Content package.json | ConvertFrom-Json).version
-          gh release edit $env:GITHUB_REF_NAME --draft --title "AYPROM $taskVersion" --notes "Unsigned Windows bootstrap release. Review CI evidence and docs/UPDATES.md before manually publishing this draft."
-          gh release upload $env:GITHUB_REF_NAME release/SHA256SUMS.txt --clobber
-          $taskRelease = gh release view $env:GITHUB_REF_NAME --json isDraft,assets | ConvertFrom-Json
+          gh release edit $env:RELEASE_TAG --draft --title "AYPROM $taskVersion" --notes "Unsigned Windows bootstrap release. Review CI evidence and docs/UPDATES.md before manually publishing this draft."
+          gh release upload $env:RELEASE_TAG release/SHA256SUMS.txt --clobber
+          $taskRelease = gh release view $env:RELEASE_TAG --json isDraft,assets | ConvertFrom-Json
           if (-not $taskRelease.isDraft) { throw 'Release must remain draft' }
           $taskNames = @($taskRelease.assets | ForEach-Object name)
           foreach ($taskRequired in @('AYPROM-Setup.exe', 'AYPROM-Setup.exe.blockmap', 'latest.yml', "AYPROM-Portable-$taskVersion.exe", 'SHA256SUMS.txt')) {
