@@ -44,6 +44,23 @@ Keep these accessible names and texts when changing UI: heading «Пакетна
 | `humanizer` | Rewriting user-facing copy, release notes, docs | Russian UI copy: short, names the action, errors name the recovery. |
 | `stop-slop` | Final pass on any prose (PRs, docs, notes) | Same as above; keep technical terms. |
 
+### Emil Kowalski skills (motion and craft)
+
+These set the motion bar for AYPROM. Any change that touches animation goes through `review-animations` before it ships.
+
+| Skill | Use it for | AYPROM configuration |
+|---|---|---|
+| `emil-design-eng` | Polish and component decisions, the "invisible details" | Personality is a crisp professional tool: no bounce, no decorative loops. |
+| `review-animations` | Mandatory review of every motion diff (invoke explicitly: it has `disable-model-invocation`) | Standards are law here: UI motion < 300 ms, strong ease-out `cubic-bezier(0.23, 1, 0.32, 1)`, never `scale(0)`, full `transform` strings in `motion` props, no animation on keyboard/high-frequency actions (mode switch, live counters). |
+| `animate` | Building a new animation from scratch | Use presets in `src/renderer/ui/motion.ts`; CSS for predetermined motion, `motion` for presence/layout. |
+| `improve-animations` | Periodic motion audit with plans | Plans go to `plans/` (see `plans/001-*`, `plans/002-*`). |
+| `find-animation-opportunities` | Spotting missing feedback | Read-only; reject anything high-frequency. |
+| `animation-vocabulary` | Naming an effect precisely before searching motion.dev / 21st.dev | — |
+| `apple-design` | Springs, materials, interruptible transitions | Springs use `{ type: "spring", duration, bounce: 0–0.06 }`. |
+| `break-ui` | Stress-testing screens with worst-case data | Realistic AYPROM worst cases: UNC paths `\\NAS\…`, 60-char folder names without spaces, 12 480 photos, exactly 1 photo, 0 photos with EPERM error, 80-char preset name (schema max), 40+ sources. Toggle stays dev-only. |
+| `pick-ui-library` | Choosing a library for a new need | Respect the CSP ('self' only) and the existing stack before adding a dependency. |
+| `prototype` | Several live variants of one UI piece | Dev-only, never shipped. |
+
 Codex keeps its own copies under `.agents/skills/`; `.claude/skills/` is what Claude Code loads. Sources and versions: `.claude/skills/SOURCES.md`.
 
 ## Design references
