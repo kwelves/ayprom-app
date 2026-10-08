@@ -126,11 +126,15 @@ One family, Onest (variable, self-hosted, full Cyrillic). The scale is fixed rem
 
 Library: `motion` (motion.dev) for presence, layout and springs; CSS for hover, press and loops. Presets live in `src/renderer/ui/motion.ts`.
 
-- **Focal moment: a run.** Start morphs into Stop, digits roll per changed place, the bar sweeps, and on completion the result sheet arrives with numbers counting up and the queue tiles turn into checks.
-- **Continuity.** Mode switch shifts content 12px in the direction of the tab order. The nav pill and segmented thumbs travel between options.
-- **Feedback.** Press scales to 0.985. Hover is colour only. Draft → full quality is a blur-to-sharp transition.
-- **Timing.** 90–140 ms feedback, 200–320 ms state change, 480 ms reveal. Exits are faster than entrances. Easing `cubic-bezier(0.16, 1, 0.3, 1)`.
-- **Reduced motion.** `MotionConfig reducedMotion="user"` drops transforms; CSS animations collapse to 1 ms. Colour and opacity feedback stays.
+Bar: Emil Kowalski's standards (`.claude/skills/review-animations/STANDARDS.md`).
+
+- **Focal moment: a run.** Start becomes Stop instantly (blur-masked swap, no wait), the bar sweeps, and on completion the result sheet arrives with numbers counting up and the queue tiles turn into checks.
+- **No motion on high-frequency actions.** Mode switches (also on Ctrl+1/2/3) are instant. The live counter does not animate; it is sampled every 120 ms so it stays readable at hundreds of photos per second.
+- **Continuity.** The nav pill and segmented thumbs travel between options. Theme changes cross-fade once through the View Transitions API.
+- **Feedback.** Press scales to 0.97 over 160 ms. Hover is colour only; the slider thumb grows only under `(hover: hover) and (pointer: fine)`. Draft → full quality is a blur-to-sharp transition. Hold-to-compare swaps with no fade, like a blink comparator.
+- **Timing.** 100–160 ms feedback, 200–240 ms state change, 300 ms reveal; nothing in UI exceeds 300 ms except the one-off count-up (≤ 800 ms). Exits are faster than entrances. Easing `cubic-bezier(0.23, 1, 0.32, 1)`; on-screen movement `cubic-bezier(0.77, 0, 0.175, 1)`.
+- **Physicality.** Nothing starts below `scale(0.85)`. `motion` props animate a full `transform` string so the compositor runs them while a batch is busy.
+- **Reduced motion.** `MotionConfig reducedMotion="user"` drops transforms; CSS animations collapse to 1 ms; the theme swap skips the view transition. Colour and opacity feedback stays.
 
 ## Don't
 

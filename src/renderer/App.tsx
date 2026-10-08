@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { Check, ChevronDown, CircleAlert, FolderOpen, X } from "lucide-react";
 import {
@@ -27,13 +27,12 @@ import {
   type Workspace,
 } from "./components/TitleBar";
 import { UpdateNotice } from "./components/UpdateNotice";
-import { ease, rise, spring, workspace } from "./ui/motion";
+import { ease, rise, spring } from "./ui/motion";
 
 export function App() {
   const [state, setState] = useState<AppState>(initialState);
   const [loaded, setLoaded] = useState(false);
-  const [tab, setTabState] = useState<Workspace>("batch");
-  const [direction, setDirection] = useState(1);
+  const [tab, setTab] = useState<Workspace>("batch");
   const [jobs, setJobs] = useState<QueueJob[]>([]);
   const [selectedJob, setSelectedJob] = useState("");
   const [busy, setBusy] = useState(false);
@@ -66,16 +65,6 @@ export function App() {
   const fail = (value: unknown) =>
     setError(value instanceof Error ? value.message : String(value));
   const notify = (text: string) => setToast({ id: Date.now(), text });
-  const setTab = useCallback((next: Workspace) => {
-    setTabState((current) => {
-      setDirection(
-        workspaceOrder.indexOf(next) >= workspaceOrder.indexOf(current)
-          ? 1
-          : -1,
-      );
-      return next;
-    });
-  }, []);
 
   useEffect(() => {
     void window.ayprom
@@ -118,18 +107,17 @@ export function App() {
             : "light"
           : state.theme;
     };
-    // Cross-fade the whole palette once instead of per-component transitions.
-    root.classList.add("theme-switching");
-    apply();
-    const timer = setTimeout(
-      () => root.classList.remove("theme-switching"),
-      260,
-    );
-    query.addEventListener("change", apply);
-    return () => {
-      clearTimeout(timer);
-      query.removeEventListener("change", apply);
+    // One composited cross-fade of the whole window instead of hundreds of
+    // per-element colour transitions. Theme changes are rare, so it earns it.
+    const swap = () => {
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!document.startViewTransition || reduce || !root.dataset.theme)
+        apply();
+      else document.startViewTransition(apply);
     };
+    swap();
+    query.addEventListener("change", swap);
+    return () => query.removeEventListener("change", swap);
   }, [state.theme]);
   useEffect(
     () =>
@@ -425,8 +413,12 @@ export function App() {
                 key="error"
                 className="notice tone-error"
                 role="alert"
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0, transition: spring.gentle }}
+                initial={{ opacity: 0, transform: "translateY(-4px)" }}
+                animate={{
+                  opacity: 1,
+                  transform: "translateY(0px)",
+                  transition: spring.gentle,
+                }}
                 exit={{ opacity: 0, transition: { duration: 0.12 } }}
               >
                 <span className="notice-icon">
@@ -450,82 +442,69 @@ export function App() {
         </div>
 
         <div className={`workbench layout-${tab}`}>
-          <AnimatePresence mode="wait" initial={false} custom={direction}>
-            <motion.div
-              key={tab}
-              className="workbench-main"
-              custom={direction}
-              variants={workspace}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              {tab === "batch" && (
-                <Queue
-                  jobs={jobs}
-                  selectedId={selectedQueueJob?.id ?? ""}
-                  busy={busy}
-                  scanning={scanning}
-                  add={(paths) => void add(paths)}
-                  select={setSelectedJob}
-                  remove={(id) => {
-                    setJobs((current) =>
-                      current.filter((job) => job.id !== id),
-                    );
-                    if (selectedJob === id)
-                      setSelectedJob(
-                        jobs.find((job) => job.id !== id)?.id ?? "",
-                      );
-                  }}
-                  preview={(path) => {
-                    setInput(path);
-                    setTab("manual");
-                  }}
-                />
-              )}
-              {tab === "history" ? (
-                <HistoryView
-                  history={state.history}
-                  onCopy={copyReport}
-                  onStart={() => setTab("batch")}
-                />
-              ) : (
-                <div className="stage-col">
-                  <AnimatePresence initial={false}>{result}</AnimatePresence>
-                  <Preview
-                    title={workspaces[tab].title}
-                    input={
-                      tab === "batch"
-                        ? (selectedQueueJob?.firstImage ?? "")
-                        : input
-                    }
-                    config={config}
-                    settings={state.export}
-                    choose={() => void choosePreview()}
-                    compact={tab === "batch"}
-                    empty={
-                      tab === "batch"
-                        ? jobs.length
-                          ? {
-                              title: "Нет доступного предпросмотра",
-                              text: "В источнике не найдено подходящее изображение.",
-                              action: true,
-                            }
-                          : {
-                              title: "Здесь появится контроль результата",
-                              text: "Добавьте папки в очередь — первое фото источника покажет, каким получится весь пакет.",
-                            }
-                        : {
-                            title: "Выберите контрольное фото",
-                            text: "Результат пересчитывается сразу после каждого изменения параметров.",
+          {/* Mode switches are frequent and keyboard-driven: no transition. */}
+          <div key={tab} className="workbench-main">
+            {tab === "batch" && (
+              <Queue
+                jobs={jobs}
+                selectedId={selectedQueueJob?.id ?? ""}
+                busy={busy}
+                scanning={scanning}
+                add={(paths) => void add(paths)}
+                select={setSelectedJob}
+                remove={(id) => {
+                  setJobs((current) => current.filter((job) => job.id !== id));
+                  if (selectedJob === id)
+                    setSelectedJob(jobs.find((job) => job.id !== id)?.id ?? "");
+                }}
+                preview={(path) => {
+                  setInput(path);
+                  setTab("manual");
+                }}
+              />
+            )}
+            {tab === "history" ? (
+              <HistoryView
+                history={state.history}
+                onCopy={copyReport}
+                onStart={() => setTab("batch")}
+              />
+            ) : (
+              <div className="stage-col">
+                <AnimatePresence initial={false}>{result}</AnimatePresence>
+                <Preview
+                  title={workspaces[tab].title}
+                  input={
+                    tab === "batch"
+                      ? (selectedQueueJob?.firstImage ?? "")
+                      : input
+                  }
+                  config={config}
+                  settings={state.export}
+                  choose={() => void choosePreview()}
+                  compact={tab === "batch"}
+                  empty={
+                    tab === "batch"
+                      ? jobs.length
+                        ? {
+                            title: "Нет доступного предпросмотра",
+                            text: "В источнике не найдено подходящее изображение.",
                             action: true,
                           }
-                    }
-                  />
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+                        : {
+                            title: "Здесь появится контроль результата",
+                            text: "Добавьте папки в очередь — первое фото источника покажет, каким получится весь пакет.",
+                          }
+                      : {
+                          title: "Выберите контрольное фото",
+                          text: "Результат пересчитывается сразу после каждого изменения параметров.",
+                          action: true,
+                        }
+                  }
+                />
+              </div>
+            )}
+          </div>
 
           {tab !== "history" && (
             <aside className="inspector panel" aria-label="Инспектор настроек">
@@ -672,13 +651,13 @@ export function App() {
           <AnimatePresence>
             {toast && (
               <motion.div
-                key={toast.id}
+                key="toast"
                 className="toast"
                 {...rise}
                 exit={{
                   opacity: 0,
-                  y: 6,
-                  transition: { duration: 0.16, ease: ease.standard },
+                  transform: "translateY(4px)",
+                  transition: { duration: 0.12, ease: ease.standard },
                 }}
               >
                 <Check size={14} strokeWidth={2.4} />

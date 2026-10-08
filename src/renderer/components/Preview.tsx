@@ -256,13 +256,13 @@ export function Preview({
                 className={`plate backdrop-${backdrop} ${isAfter ? "plate-after" : ""}`}
               >
                 <figcaption className="plate-label">
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence mode="popLayout" initial={false}>
                     <motion.span
                       key={showBefore ? "peek" : side}
-                      initial={{ opacity: 0, y: 3 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -3 }}
-                      transition={{ duration: 0.14, ease: ease.out }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.08 }}
                     >
                       {side === "before" || showBefore
                         ? "Исходник"

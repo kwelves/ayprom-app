@@ -1,49 +1,61 @@
-import type { Transition, Variants } from "motion/react";
+import type { Transition } from "motion/react";
 
-/** Motion presets shared by every component. Durations mirror tokens.css. */
+/**
+ * Motion presets shared by every component. Durations mirror tokens.css.
+ *
+ * Rules (Emil Kowalski's standards, see .claude/skills/review-animations):
+ * UI motion stays under 300 ms, enters with a strong ease-out, exits faster,
+ * never starts from scale(0), and animates a full `transform` string so the
+ * compositor runs it even while a batch keeps the main thread busy.
+ */
 export const ease = {
-  out: [0.16, 1, 0.3, 1],
-  inOut: [0.65, 0, 0.35, 1],
+  out: [0.23, 1, 0.32, 1],
+  inOut: [0.77, 0, 0.175, 1],
   standard: [0.2, 0, 0, 1],
 } as const;
 
 export const spring = {
-  /** Selection thumbs, nav pill: quick, no visible overshoot. */
-  snappy: { type: "spring", stiffness: 560, damping: 42, mass: 0.8 },
-  /** Panels and sheets arriving into place. */
-  gentle: { type: "spring", stiffness: 320, damping: 34, mass: 0.9 },
+  /** Selection thumbs, nav pill: settles in ~180 ms, no overshoot. */
+  snappy: { type: "spring", duration: 0.22, bounce: 0 },
+  /** Dialog and result sheet arriving into place. */
+  gentle: { type: "spring", duration: 0.28, bounce: 0.06 },
   /** List reflow after insert/remove. */
-  layout: { type: "spring", stiffness: 420, damping: 40, mass: 0.9 },
+  layout: { type: "spring", duration: 0.26, bounce: 0 },
 } satisfies Record<string, Transition>;
 
-export const fade = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.2, ease: ease.out } },
-  exit: { opacity: 0, transition: { duration: 0.12, ease: ease.standard } },
-};
+const lift = (px: number) => `translateY(${px}px)`;
 
 /** Content arriving from slightly below; exits faster than it enters. */
 export const rise = {
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.32, ease: ease.out } },
+  initial: { opacity: 0, transform: lift(6) },
+  animate: {
+    opacity: 1,
+    transform: lift(0),
+    transition: { duration: 0.2, ease: ease.out },
+  },
   exit: {
     opacity: 0,
-    y: -4,
-    transition: { duration: 0.14, ease: ease.standard },
+    transform: lift(4),
+    transition: { duration: 0.12, ease: ease.standard },
   },
 };
 
-/** Workspace switch: a short lateral shift preserves the tab order. */
-export const workspace = {
-  initial: (direction: number) => ({ opacity: 0, x: 12 * direction }),
+/**
+ * Two states of one region replacing each other (dock idle ↔ running).
+ * No wait between them: the new state answers the press immediately, and a
+ * 2 px blur merges the overlap into one change instead of a double image.
+ */
+export const swap = {
+  initial: { opacity: 0, filter: "blur(2px)", transform: lift(4) },
   animate: {
     opacity: 1,
-    x: 0,
-    transition: { duration: 0.28, ease: ease.out },
+    filter: "blur(0px)",
+    transform: lift(0),
+    transition: { duration: 0.2, ease: ease.out },
   },
-  exit: (direction: number) => ({
+  exit: {
     opacity: 0,
-    x: -8 * direction,
-    transition: { duration: 0.12, ease: ease.standard },
-  }),
-} satisfies Variants;
+    filter: "blur(2px)",
+    transition: { duration: 0.1, ease: ease.standard },
+  },
+};

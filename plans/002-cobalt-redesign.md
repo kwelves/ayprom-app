@@ -22,6 +22,14 @@ The previous pass used a teal accent that does not exist in the AYPROM brand. Th
 - Budget: transforms and opacity only on lists; blur limited to the preview image and digits.
 - Reduced motion: `MotionConfig reducedMotion="user"`, CSS animations collapse.
 
+## Review pass (review-animations, break-ui)
+
+- Removed the workspace slide on mode switch (keyboard/high-frequency).
+- Replaced the rolling-digit counter: under real throughput it never stopped moving. Now a static tabular number sampled every 120 ms.
+- `x`/`y` shorthands → full `transform` strings; durations capped at 300 ms; no entrance below `scale(0.85)`.
+- Theme switch via View Transitions instead of global colour transitions.
+- Worst-case data fixed: UNC path shortening keeps the server, errors wrap and clamp to three lines, counts use Russian grouping (17 920), queue meta wraps between items only, long file names ellipsize in the stage header, result footer wraps at 900 px.
+
 ## Rejected
 
 - Before/after wipe slider: the result is re-framed onto a new canvas, so a wipe compares unrelated pixels. Side-by-side plus in-place hold is honest.

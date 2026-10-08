@@ -207,7 +207,7 @@ fieldset {
     border-color var(--t-fast) var(--ease-standard),
     color var(--t-fast) var(--ease-standard),
     box-shadow var(--t-fast) var(--ease-standard),
-    transform var(--t-instant) var(--ease-standard),
+    transform var(--t-fast) var(--ease-out),
     opacity var(--t-fast) var(--ease-standard);
 }
 
@@ -217,7 +217,7 @@ fieldset {
 
 .btn:active:not(:disabled) {
   --btn-bg: var(--bg-active);
-  transform: translateY(0.5px) scale(0.985);
+  transform: scale(0.97);
 }
 
 .btn:disabled {
@@ -336,7 +336,7 @@ fieldset {
   transition:
     background-color var(--t-fast) var(--ease-standard),
     color var(--t-fast) var(--ease-standard),
-    transform var(--t-instant) var(--ease-standard);
+    transform var(--t-fast) var(--ease-out);
 }
 
 .icon-btn:hover:not(:disabled) {
@@ -346,7 +346,7 @@ fieldset {
 
 .icon-btn:active:not(:disabled) {
   background: var(--bg-active);
-  transform: scale(0.94);
+  transform: scale(0.95);
 }
 
 .icon-btn:disabled {
@@ -566,8 +566,10 @@ input[type="color"]::-webkit-color-swatch {
     box-shadow var(--t-fast) var(--ease-standard);
 }
 
-.range:hover:not(:disabled)::-webkit-slider-thumb {
-  transform: scale(1.12);
+@media (hover: hover) and (pointer: fine) {
+  .range:hover:not(:disabled)::-webkit-slider-thumb {
+    transform: scale(1.12);
+  }
 }
 
 .range:active:not(:disabled)::-webkit-slider-thumb {

@@ -9,14 +9,11 @@
   background: var(--bg-app);
 }
 
-:root.theme-switching *,
-:root.theme-switching *::before,
-:root.theme-switching *::after {
-  transition:
-    background-color var(--t-base) var(--ease-standard),
-    border-color var(--t-base) var(--ease-standard),
-    color var(--t-base) var(--ease-standard),
-    fill var(--t-base) var(--ease-standard) !important;
+/* Theme switch: one composited cross-fade (View Transitions API). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--t-base);
+  animation-timing-function: var(--ease-out);
 }
 
 /* ---------- Title bar ---------- */
@@ -513,9 +510,14 @@
   font-weight: 600;
 }
 
+.queue-meta > span {
+  white-space: nowrap;
+}
+
 .queue-meta {
   display: flex;
-  gap: 6px;
+  flex-wrap: wrap;
+  gap: 0 6px;
   color: var(--fg-2);
   font-size: var(--text-xs);
 }
@@ -548,6 +550,15 @@
 .inline-error {
   color: var(--danger);
   font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+.clamp-3 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 
 /* Dropzone */
@@ -724,11 +735,20 @@
 }
 
 .stage-file-name {
+  min-width: 0;
+  overflow: hidden;
   color: var(--fg-2);
   font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stage-file .mono {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 11px;
   color: var(--fg-3);
 }
@@ -848,6 +868,12 @@
 /* Draft previews are low resolution: show them as soft until refined. */
 .plate-layers img[data-draft] {
   filter: blur(3px) saturate(0.92);
+}
+
+/* Hold-to-compare is a blink comparator: swap with no fade. */
+.plate-layers img.peek,
+.plate-layers img.is-hidden {
+  transition: none;
 }
 
 .plate-layers img.is-hidden {
@@ -998,13 +1024,6 @@
   stroke: var(--accent);
   stroke-dasharray: 4 4;
   stroke-opacity: 0.55;
-  animation: spec-dash 14s linear infinite;
-}
-
-@keyframes spec-dash {
-  to {
-    stroke-dashoffset: -120;
-  }
 }
 
 .spec-cross {
@@ -1125,6 +1144,7 @@
 
 .result-foot {
   display: flex;
+  flex-wrap: wrap;
   grid-column: 1 / -1;
   align-items: center;
   justify-content: space-between;
@@ -1151,6 +1171,7 @@
 /* Disclosure (native details) */
 .disclosure summary {
   display: flex;
+  white-space: nowrap;
   align-items: center;
   gap: 6px;
   width: fit-content;
@@ -1668,7 +1689,7 @@
   gap: 6px;
 }
 
-.dock-digits .digits {
+.dock-digits > .num:first-child {
   font-size: var(--text-xl);
   font-weight: 650;
   letter-spacing: var(--tracking-tight);
@@ -1795,7 +1816,7 @@ button.step-btn:hover {
   border-radius: inherit;
   background: var(--accent);
   transform-origin: left center;
-  transition: transform var(--t-slow) var(--ease-out);
+  transition: transform var(--t-base) linear;
 }
 
 .meter-success .meter-fill {
@@ -1829,22 +1850,6 @@ button.step-btn:hover {
   to {
     background-position: 250% 0;
   }
-}
-
-/* ---------- Digits ---------- */
-
-.digits {
-  display: inline-flex;
-}
-
-.digit-slot {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-}
-
-.digit {
-  display: inline-block;
 }
 
 /* ---------- Dialog ---------- */

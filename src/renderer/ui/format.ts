@@ -1,15 +1,26 @@
-/** Keeps the drive and the last folders of a Windows or POSIX path. */
+/**
+ * Keeps the root (drive letter or \\server) and the last folders of a
+ * Windows or POSIX path: D:\…\Осень\Косметика, \\NAS\…\Wildberries\2026-10.
+ */
 export function shortPath(path: string, keep = 2) {
   if (!path) return "";
   const separator = path.includes("\\") ? "\\" : "/";
+  const unc = path.startsWith("\\\\");
   const parts = path.split(/[\\/]/).filter(Boolean);
   if (parts.length <= keep + 1) return path;
-  const head = /^[A-Za-z]:$/.test(parts[0])
-    ? parts[0]
+  const head = unc
+    ? `\\\\${parts[0]}`
     : path.startsWith(separator)
       ? ""
       : parts[0];
   return [head, "…", ...parts.slice(-keep)].join(separator);
+}
+
+const integer = new Intl.NumberFormat("ru-RU");
+
+/** Counts with Russian digit grouping: 17 920. */
+export function count(value: number) {
+  return integer.format(value);
 }
 
 export function baseName(path: string) {

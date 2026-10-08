@@ -39,10 +39,10 @@ export function ExportControls({
         <motion.div
           key={value.format}
           className="stack"
-          initial={{ opacity: 0, y: 4 }}
+          initial={{ opacity: 0, transform: "translateY(3px)" }}
           animate={{
             opacity: 1,
-            y: 0,
+            transform: "translateY(0px)",
             transition: { duration: 0.22, ease: ease.out },
           }}
           exit={{ opacity: 0, transition: { duration: 0.1 } }}
