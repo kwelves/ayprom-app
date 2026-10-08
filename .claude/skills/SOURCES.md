@@ -10,5 +10,6 @@ Installed for Claude Code on 2026-10-08. Each folder is a vendored copy; update 
 | `ui-ux-pro-max/` | `nextlevelbuilder/ui-ux-pro-max-skill` (main): `.claude/skills/ui-ux-pro-max/{SKILL.md,references}`, `src/ui-ux-pro-max/{scripts,data}` | Local change: script paths in SKILL.md point to `.claude/skills/ui-ux-pro-max/scripts/search.py` instead of `${CLAUDE_PLUGIN_ROOT}`. Python 3, stdlib only. |
 | `humanizer/` | `blader/humanizer` → `SKILL.md` (main) | MIT. |
 | `stop-slop/` | `hardikpandya/stop-slop` (copied from `.agents/skills/stop-slop`) | |
+| `animate/`, `animation-vocabulary/`, `apple-design/`, `emil-design-eng/`, `find-animation-opportunities/`, `improve-animations/`, `review-animations/`, `break-ui/`, `pick-ui-library/`, `prototype/` | `emilkowalski/skills` → `skills/<name>/` (main, MIT) | Newer than the `.agents/skills` copies. Not installed: `animate-expo`, `mobile-native`, `write-swift` (native platforms), `ask-sonner` (the app has its own toast). |
 
 Project-specific configuration for all of them lives in the root `CLAUDE.md` (Skills section).
