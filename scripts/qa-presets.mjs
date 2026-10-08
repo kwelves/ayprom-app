@@ -82,7 +82,9 @@ try {
       .locator("option")
       .filter({ hasText: "Renamed QA" }),
   ).toHaveCount(1);
-  await expect(page.getByLabel("Тема", { exact: true })).toHaveValue("dark");
+  await expect(
+    page.getByRole("radio", { name: "Тёмная тема", exact: true }),
+  ).toHaveAttribute("aria-checked", "true");
   await page.getByLabel("Пресет", { exact: true }).selectOption(id);
   await expect(page.getByLabel("Ширина холста: значение")).toHaveValue("200");
   checks.push("Preset and theme survive complete process restart");
