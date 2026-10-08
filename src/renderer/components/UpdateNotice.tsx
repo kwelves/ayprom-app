@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import type { UpdateState } from "../../shared/contracts";
 import { describeUpdateState, type UpdateAction } from "../update-view";
+import { Meter } from "../ui/Meter";
 
 export function UpdateNotice({
   state,
@@ -35,13 +36,17 @@ export function UpdateNotice({
     if (state.status !== "available" && state.status !== "downloaded")
       return null;
     return (
-      <section className="update-reminder" aria-label="Обновление AYPROM">
+      <section className="notice notice-compact" aria-label="Обновление AYPROM">
         <span>
           {state.status === "downloaded"
             ? `AYPROM ${state.availableVersion} готов к установке`
             : `Доступен AYPROM ${state.availableVersion}`}
         </span>
-        <button className="compact-button" onClick={() => setDismissed("")}>
+        <button
+          type="button"
+          className="btn btn-sm btn-ghost"
+          onClick={() => setDismissed("")}
+        >
           Показать
         </button>
       </section>
@@ -84,38 +89,42 @@ export function UpdateNotice({
 
   return (
     <section
-      className={`update-notice update-${view.tone}`}
+      className={`notice tone-${view.tone}`}
       aria-live="polite"
       aria-label="Обновление AYPROM"
     >
-      <Icon className="update-notice-icon" size={18} />
-      <div className="update-notice-copy">
+      <span className="notice-icon">
+        <Icon size={16} />
+      </span>
+      <div className="notice-copy">
         <strong>{view.title}</strong>
         {view.detail && <p>{view.detail}</p>}
         {view.progress !== undefined && (
-          <progress
-            aria-label="Загрузка обновления"
+          <Meter
+            size="sm"
+            label="Загрузка обновления"
             value={view.progress}
             max={100}
           />
         )}
       </div>
-      <div className="update-notice-actions">
+      <div className="notice-actions">
         {[view.primary, view.secondary].filter(Boolean).map((button) => {
           const action = button!;
           const ActionIcon = actionIcon(action.action);
           return (
             <button
               key={action.action}
+              type="button"
               className={
                 action === view.primary && action.action !== "releases"
-                  ? "primary compact-button"
-                  : "compact-button"
+                  ? "btn btn-sm btn-primary"
+                  : "btn btn-sm btn-ghost"
               }
               disabled={action.disabled}
               onClick={() => run(action.action)}
             >
-              <ActionIcon size={14} />
+              <ActionIcon size={13} />
               {action.label}
             </button>
           );

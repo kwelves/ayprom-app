@@ -65,9 +65,9 @@ try {
   if (security.node !== "undefined" || security.bridge !== "function")
     throw Error("Security boundary failed");
   report.checks.push("Node isolation and typed bridge");
-  await page.getByLabel("Тема", { exact: true }).selectOption("dark");
+  await page.getByRole("radio", { name: "Тёмная тема", exact: true }).click();
   await page.screenshot({ path: path.join(root, "dark.png"), fullPage: true });
-  await page.getByLabel("Тема", { exact: true }).selectOption("light");
+  await page.getByRole("radio", { name: "Светлая тема", exact: true }).click();
   await application.evaluate(({ dialog }, source) => {
     dialog.showOpenDialog = async () => ({
       canceled: false,
@@ -75,9 +75,10 @@ try {
     });
   }, source);
   await page.getByRole("button", { name: "Добавить", exact: true }).click();
-  await expect(page.getByText("2 изображений", { exact: false })).toBeVisible({
-    timeout: 30000,
-  });
+  await expect(page.locator("#queue-title + .panel-sub")).toContainText(
+    "2 фото",
+    { timeout: 30000 },
+  );
   report.checks.push("Native input dialog and recursive utility scan");
   await page.getByLabel("Ширина холста: значение").fill("160");
   await page.getByTitle("Создать пресет с текущими настройками").click();

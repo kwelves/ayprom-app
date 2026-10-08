@@ -59,7 +59,7 @@ try {
     .click();
   await expect(page.getByLabel("Ширина холста: значение")).toHaveValue("200");
   checks.push("Rename Save Reset and builtin session draft");
-  await page.getByLabel("Тема", { exact: true }).selectOption("dark");
+  await page.getByRole("radio", { name: "Тёмная тема", exact: true }).click();
   await expect
     .poll(async () =>
       page.evaluate(async () => {
