@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useIsPresent } from "motion/react";
 import { Check, Circle, FolderOutput, Play, Square } from "lucide-react";
 import { Digits } from "../ui/Digits";
 import { clock, count, eta, plural, shortPath } from "../ui/format";
@@ -48,7 +48,7 @@ export function ProcessDock({
     <footer className={`dock ${busy ? "is-busy" : ""}`}>
       <AnimatePresence mode="popLayout" initial={false}>
         {busy ? (
-          <motion.div key="run" className="dock-run" {...swap}>
+          <Swap key="run" className="dock-run">
             <div className="dock-count">
               <strong className="dock-title">
                 {cancelling ? (
@@ -86,9 +86,9 @@ export function ProcessDock({
             <span className="dock-percent num" aria-hidden="true">
               {Math.floor((done / span) * 100)}%
             </span>
-          </motion.div>
+          </Swap>
         ) : (
-          <motion.div key="idle" className="dock-idle" {...swap}>
+          <Swap key="idle" className="dock-idle">
             <div className="dock-count min-w-0">
               <strong className="dock-title">
                 {canProcess
@@ -117,53 +117,60 @@ export function ProcessDock({
                 icon={<FolderOutput size={13} />}
               />
             </ol>
-          </motion.div>
+          </Swap>
         )}
       </AnimatePresence>
 
       <div className="dock-action">
-        <AnimatePresence mode="popLayout" initial={false}>
+        {/* One element for Start and Stop: the press gets an immediate answer
+            and there is never a leaving button lying over the new one. */}
+        <button
+          type="button"
+          className={
+            busy ? "btn btn-lg btn-danger" : "btn btn-lg btn-primary start-btn"
+          }
+          disabled={busy ? cancelling : !canProcess}
+          onClick={busy ? onCancel : onStart}
+          title={busy ? undefined : "Запустить · Ctrl+Enter"}
+        >
           {busy ? (
-            <motion.button
-              key="stop"
-              type="button"
-              className="btn btn-lg btn-danger"
-              disabled={cancelling}
-              onClick={onCancel}
-              initial={{ opacity: 0, transform: "scale(0.97)" }}
-              animate={{
-                opacity: 1,
-                transform: "scale(1)",
-                transition: { duration: 0.16, ease: ease.out },
-              }}
-              exit={{ opacity: 0, transition: { duration: 0.08 } }}
-            >
+            <>
               <Square size={14} fill="currentColor" />
               {cancelling ? "Останавливаем…" : "Остановить"}
-            </motion.button>
+            </>
           ) : (
-            <motion.button
-              key="start"
-              type="button"
-              className="btn btn-lg btn-primary start-btn"
-              disabled={!canProcess}
-              onClick={onStart}
-              title="Запустить · Ctrl+Enter"
-              initial={{ opacity: 0, transform: "scale(0.97)" }}
-              animate={{
-                opacity: 1,
-                transform: "scale(1)",
-                transition: { duration: 0.16, ease: ease.out },
-              }}
-              exit={{ opacity: 0, transition: { duration: 0.08 } }}
-            >
+            <>
               <Play size={15} fill="currentColor" />
               Запустить обработку
-            </motion.button>
+            </>
           )}
-        </AnimatePresence>
+        </button>
       </div>
     </footer>
+  );
+}
+
+/**
+ * One state of the dock. While it animates out it is inert, so a leaving
+ * state can never take a click meant for the one replacing it.
+ */
+function Swap({
+  className,
+  children,
+}: {
+  className: string;
+  children: React.ReactNode;
+}) {
+  const present = useIsPresent();
+  return (
+    <motion.div
+      className={className}
+      inert={!present}
+      style={{ pointerEvents: present ? undefined : "none" }}
+      {...swap}
+    >
+      {children}
+    </motion.div>
   );
 }
 

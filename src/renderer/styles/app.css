@@ -1787,12 +1787,8 @@ button.step-btn:hover {
   display: flex;
 }
 
-.start-btn {
+.dock-action .btn {
   min-width: 228px;
-}
-
-.dock .btn-danger {
-  min-width: 160px;
 }
 
 /* ---------- Meter ---------- */
@@ -2052,7 +2048,7 @@ button.step-btn:hover {
   .result-stats > div {
     min-width: 0;
   }
-  .start-btn {
+  .dock-action .btn {
     min-width: 0;
   }
   .modes .mode-content > span:not(.mode-live) {
