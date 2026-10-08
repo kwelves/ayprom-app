@@ -12,9 +12,9 @@ AYPROM is a local Windows desktop tool for preparing batches of product photogra
 
 ## Visual direction
 
-The interface uses a restrained photographic light-table metaphor: neutral canvas surfaces, precise dividers, compact controls and a single teal AYPROM accent. The composition is a compact mode rail, a large central work surface, a contextual inspector and a persistent action/status dock. It follows Windows desktop conventions while applying Apple-derived principles of clarity, hierarchy, immediate feedback and spatial consistency.
+A calibrated studio workspace in the AYPROM brand. Surfaces are near-zero-chroma neutrals so photos are judged without a color cast. AYPROM Cobalt (#053C95, from the brand mark) is the only accent: current mode, selection, focus and the primary action. The composition is an integrated title bar with the mode switch, a queue, a large preview stage, a parameter inspector and a process dock. Measurements (canvas size, dimension lines) are drawn as measurements.
 
-Density is high enough for daily production work. Surfaces are layered with borders or restrained shadows, never both by default. Typography uses the Windows system stack with tabular figures for counts. Motion is short, interruptible and limited to state changes.
+Onest is the single UI family, with tabular figures for counts and JetBrains Mono for paths. Panels separate with hairlines; only floating elements cast shadows. Motion explains state: the run is the one authored sequence, everything else is short feedback. Full rules live in DESIGN.md.
 
 ## Interaction priorities
 

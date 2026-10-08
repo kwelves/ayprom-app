@@ -1,87 +1,121 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-09T00:00:00.000Z",
+  "generatedAt": "2026-10-08T00:00:00.000Z",
   "title": "Design System: AYPROM",
   "extensions": {
     "colorMeta": {
       "primary": {
         "role": "primary",
-        "displayName": "AYPROM Teal",
-        "canonical": "#087c72",
+        "displayName": "AYPROM Cobalt",
+        "canonical": "#053c95",
         "tonalRamp": [
-          "#07302d",
-          "#075048",
-          "#087c72",
-          "#34a69b",
-          "#55c9bb",
-          "#8ce0d6",
-          "#c5f0eb",
-          "#eefaf8"
+          "#0a1f4d",
+          "#053c95",
+          "#194ab7",
+          "#1b4fc3",
+          "#346be2",
+          "#8cb3ff",
+          "#e5efff",
+          "#f3f7ff"
         ]
       },
       "canvas": {
         "role": "neutral",
-        "displayName": "Cool Canvas",
-        "canonical": "#eef1f3",
+        "displayName": "Calibrated Neutral",
+        "canonical": "#f3f4f5",
         "tonalRamp": [
-          "#172022",
-          "#293437",
-          "#465355",
-          "#647276",
-          "#879397",
-          "#bcc7ca",
-          "#d7dde0",
-          "#f7f8f9"
+          "#15181e",
+          "#3a3d44",
+          "#5f636a",
+          "#8f9298",
+          "#dee0e2",
+          "#e8e9eb",
+          "#f3f4f5",
+          "#fcfdfd"
         ]
       }
     },
     "typographyMeta": {
-      "title": {
-        "displayName": "Workspace title",
-        "purpose": "Compact mode headings."
+      "ui": {
+        "displayName": "Onest Variable",
+        "purpose": "All interface text; tabular figures for counts."
       },
-      "body": {
-        "displayName": "Interface body",
-        "purpose": "Controls and operational copy."
+      "data": {
+        "displayName": "JetBrains Mono Variable",
+        "purpose": "File paths and measurements."
+      },
+      "wordmark": {
+        "displayName": "Michroma",
+        "purpose": "AYPROM wordmark only."
       }
     },
     "shadows": [
       {
-        "name": "float",
-        "value": "0 16px 40px rgba(27,40,43,0.16)",
-        "purpose": "Modal surfaces only."
+        "name": "sm",
+        "value": "0 1px 2px / 0 2px 6px -1px (neutral, 6%)",
+        "purpose": "Segmented thumbs, result sheet."
+      },
+      {
+        "name": "pop",
+        "value": "0 2px 6px / 0 14px 36px -10px (neutral, 24%)",
+        "purpose": "Dialog and toast only."
       }
     ],
     "motion": [
       {
-        "name": "fast",
-        "value": "110ms cubic-bezier(0.2,0,0,1)",
-        "purpose": "Hover and press feedback."
+        "name": "feedback",
+        "value": "90-140ms cubic-bezier(0.2,0,0,1)",
+        "purpose": "Hover and press."
       },
       {
-        "name": "normal",
-        "value": "180ms cubic-bezier(0.16,1,0.3,1)",
-        "purpose": "Workspace, queue and message state changes."
+        "name": "state",
+        "value": "200-320ms cubic-bezier(0.16,1,0.3,1)",
+        "purpose": "Mode switch, notices, rows."
+      },
+      {
+        "name": "spring-snappy",
+        "value": "stiffness 560, damping 42",
+        "purpose": "Nav pill and segmented thumbs."
+      },
+      {
+        "name": "reveal",
+        "value": "480ms cubic-bezier(0.16,1,0.3,1)",
+        "purpose": "Preview draft-to-full sharpen."
       }
     ],
     "breakpoints": [
-      { "name": "compact-rail", "value": "1150px" },
-      { "name": "minimum-window", "value": "960px" }
+      {
+        "name": "wide",
+        "value": "1600px"
+      },
+      {
+        "name": "compact-chips",
+        "value": "1240px"
+      },
+      {
+        "name": "stacked-queue",
+        "value": "1080px"
+      },
+      {
+        "name": "minimum-window",
+        "value": "900px"
+      }
     ]
   },
   "components": [],
   "narrative": {
-    "northStar": "The Photographic Light Table",
-    "overview": "A calm, technical Windows workspace with neutral planes, precise dividers, compact controls and a single teal accent.",
+    "northStar": "The Calibrated Table",
+    "overview": "A calibrated studio workspace in the AYPROM brand: near-zero-chroma neutrals, one cobalt accent from the brand mark, measurements drawn as measurements.",
     "keyCharacteristics": [
-      "Operational density",
-      "Purposeful motion",
-      "Distinct light and dark themes"
+      "Integrated title bar with mode switch",
+      "Stage-first preview with draft-to-full sharpen",
+      "Process dock with readiness and live progress",
+      "Distinct light and dark palettes"
     ],
     "rules": [
       {
         "name": "The One Accent Rule",
-        "body": "Teal identifies agency and state, never decoration.",
+        "body": "AYPROM Cobalt identifies agency and state, never decoration.",
         "section": "colors"
       }
     ],

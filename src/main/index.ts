@@ -5,6 +5,7 @@ import {
   dialog,
   shell,
   clipboard,
+  nativeTheme,
   session,
 } from "electron";
 import { promises as fs } from "node:fs";
@@ -19,6 +20,7 @@ import {
   pathSchema,
   stateSchema,
   updateActionPayloadSchema,
+  type AppState,
   type Summary,
   type ScanJob,
 } from "../shared/contracts";
@@ -43,6 +45,23 @@ const iconPath = () =>
   app.isPackaged
     ? path.join(process.resourcesPath, "app-icon.png")
     : path.join(app.getAppPath(), "assets", "app-icon.png");
+// Window chrome colors mirror --bg-chrome / --fg-1 in the renderer tokens.
+const chrome = (dark: boolean) => ({
+  color: dark ? "#121315" : "#eef0f2",
+  symbolColor: dark ? "#e7e9ee" : "#1c2230",
+  height: 44,
+});
+const integratedTitleBar = process.platform === "win32";
+function applyTheme(theme: AppState["theme"]) {
+  nativeTheme.themeSource = theme;
+  paintChrome();
+}
+function paintChrome() {
+  if (!window || window.isDestroyed()) return;
+  const dark = nativeTheme.shouldUseDarkColors;
+  window.setBackgroundColor(dark ? "#121315" : "#eef0f2");
+  if (integratedTitleBar) window.setTitleBarOverlay(chrome(dark));
+}
 function handle(name: string, action: (payload: unknown) => unknown) {
   ipcMain.handle(name, async (event, payload: unknown) => {
     if (
@@ -58,6 +77,7 @@ async function main() {
   await app.whenReady();
   store = new StateStore(app.getPath("userData"));
   const state = await store.load();
+  nativeTheme.themeSource = state.theme;
   session.defaultSession.setPermissionRequestHandler(
     (_wc, _permission, callback) => callback(false),
   );
@@ -77,9 +97,15 @@ async function main() {
     minHeight: 650,
     title: BRAND.name,
     icon: iconPath(),
-    backgroundColor: "#11151b",
+    backgroundColor: nativeTheme.shouldUseDarkColors ? "#121315" : "#eef0f2",
     show: false,
     autoHideMenuBar: true,
+    ...(integratedTitleBar
+      ? {
+          titleBarStyle: "hidden" as const,
+          titleBarOverlay: chrome(nativeTheme.shouldUseDarkColors),
+        }
+      : {}),
     webPreferences: {
       preload: path.join(__dirname, "../preload/index.cjs"),
       contextIsolation: true,
@@ -199,7 +225,12 @@ async function main() {
     preview = undefined;
   });
   handle("load-state", () => store.get());
-  handle("save-state", (value) => store.save(stateSchema.parse(value)));
+  handle("save-state", (value) => {
+    const next = stateSchema.parse(value);
+    if (next.theme !== nativeTheme.themeSource) applyTheme(next.theme);
+    return store.save(next);
+  });
+  nativeTheme.on("updated", paintChrome);
   handle("open-output", async (value) => {
     const target = pathSchema.parse(value);
     if (!path.isAbsolute(target)) throw new Error("Нужен абсолютный путь");

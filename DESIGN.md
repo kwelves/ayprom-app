@@ -1,109 +1,141 @@
 ---
 name: AYPROM
-description: Precise local workspace for product photography
+description: Calibrated workspace for batch product photography
 colors:
-  primary: "#087c72"
-  primary-soft: "#dff1ee"
-  canvas: "#eef1f3"
-  work: "#f7f8f9"
-  panel: "#ffffff"
-  text-strong: "#172022"
-  text: "#293437"
-  text-muted: "#647276"
-  border: "#d7dde0"
-  success: "#18734a"
-  danger: "#b33131"
+  brand: "#053c95"
+  accent: "#1b4fc3"
+  accent-dark: "#346be2"
+  accent-soft: "#e5efff"
+  chrome: "#eef0f2"
+  app: "#f3f4f5"
+  panel: "#fcfdfd"
+  stage: "#e8e9eb"
+  line: "#dee0e2"
+  fg-1: "#15181e"
+  fg-2: "#3a3d44"
+  fg-3: "#5f636a"
+  success: "#1c7f4c"
+  warning: "#a06604"
+  danger: "#c2272a"
 typography:
-  title:
-    fontFamily: "Segoe UI Variable Text, Segoe UI, system-ui, sans-serif"
-    fontSize: "20px"
-    fontWeight: 680
-    lineHeight: 1.25
-    letterSpacing: "-0.018em"
-  body:
-    fontFamily: "Segoe UI Variable Text, Segoe UI, system-ui, sans-serif"
-    fontSize: "14px"
+  ui:
+    fontFamily: "Onest Variable, Segoe UI Variable Text, system-ui, sans-serif"
+    fontSize: "13px"
     fontWeight: 400
-    lineHeight: 1.48
-  label:
-    fontFamily: "Segoe UI Variable Text, Segoe UI, system-ui, sans-serif"
-    fontSize: "11px"
+    lineHeight: 1.5
+  title:
+    fontFamily: "Onest Variable"
+    fontSize: "14px"
+    fontWeight: 600
+    lineHeight: 1.2
+    letterSpacing: "-0.008em"
+  stat:
+    fontFamily: "Onest Variable"
+    fontSize: "19px"
     fontWeight: 650
-    lineHeight: 1.4
+    fontFeature: "tnum"
+    letterSpacing: "-0.018em"
+  data:
+    fontFamily: "JetBrains Mono Variable, Cascadia Mono, monospace"
+    fontSize: "11px"
+  wordmark:
+    fontFamily: "Michroma"
+    fontSize: "12px"
+    letterSpacing: "0.1em"
 rounded:
-  sm: "5px"
+  xs: "4px"
+  sm: "6px"
   md: "8px"
   lg: "12px"
+  xl: "14px"
 spacing:
-  xs: "4px"
-  sm: "8px"
-  md: "16px"
-  lg: "24px"
+  base: "4px"
+  scale: "2 4 8 12 16 20 24 32 40 48"
 components:
   button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.panel}"
+    backgroundColor: "{colors.accent}"
+    textColor: "#ffffff"
     rounded: "{rounded.md}"
-    height: "44px"
-    padding: "9px 17px"
-  input:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.text}"
+    height: "40px"
+  control:
+    height: "32px"
     rounded: "{rounded.md}"
-    height: "36px"
-    padding: "6px 8px"
+  segmented:
+    height: "28px / 24px"
+    thumb: "raised surface, spring 560/42"
 ---
 
 # Design System: AYPROM
 
-## Overview
+Source of truth for tokens: `src/renderer/styles/tokens.css`. This file explains the decisions; the CSS holds the values.
 
-**Creative North Star: "The Photographic Light Table"**
+## North star: «Калиброванный стол»
 
-AYPROM is a calm, technical Windows workspace. Neutral planes keep attention on product imagery while precise dividers, compact controls and a single teal accent make hierarchy immediate. The system favors daily-operational density over landing-page spectacle.
+AYPROM prepares batches of product photos for marketplaces. People judge color, edges and framing on this screen all day, so the interface behaves like calibrated studio gear: neutral surfaces with almost no chroma, one brand hue, measurements drawn as measurements.
 
-**Key Characteristics:**
+The brand color comes from the real AYPROM mark: cobalt `#053C95` with an extended geometric wordmark and an underline rule. The previous teal accent did not belong to the brand and is retired.
 
-- Compact mode rail, central work surface, contextual inspector and persistent action dock.
-- Purposeful motion for selection, preview, processing and feedback only.
-- Light and dark palettes designed as distinct tonal systems.
+## Color
 
-## Colors
-
-Teal marks agency and active state; cool neutrals carry structure; semantic colors are reserved for outcomes.
-
-**The One Accent Rule.** Teal identifies the current mode, selection, focus and primary action. It is not decoration.
+- **Neutrals carry no cast.** Surfaces are OKLCH with chroma ≤ 0.006 at hue 260. A product shot on the stage looks the same as in the exported file.
+- **One hue with agency.** Cobalt marks the current mode, selection, focus ring and the primary action. It never decorates.
+- **Two cobalts.** `--brand` (#053C95) is reserved for the wordmark. `--accent` is one step brighter so white text on buttons stays above 7:1 (light) and 4.8:1 (dark).
+- **Outcomes are semantic.** Green = done, amber = draft/cancelled/attention, red = failure. Each has a soft tint for backgrounds.
+- **Contrast floor.** `--fg-3` and above pass 4.5:1 on panels in both themes. `--fg-4` is for icons, rules and disabled states only.
+- **Dark theme is its own palette.** Not an inversion: darker stage than panels, lighter accent text, deeper shadows.
 
 ## Typography
 
-The Windows system family keeps controls native and legible. Weight and spacing create hierarchy; large display typography is intentionally absent.
+One family, Onest (variable, self-hosted, full Cyrillic). The scale is fixed rem with a ~1.2 ratio: 11 / 12 / 13 (UI default) / 14 / 16 / 19 / 23 / 28.
+
+- Counts and progress use tabular figures (`.num`).
+- File paths use JetBrains Mono, and they are shortened in the middle (`D:\…\Осень\Косметика`) with the full path in `title`.
+- Michroma is used only for the AYPROM wordmark, echoing the extended letters of the logo.
+- No eyebrows, no all-caps labels.
 
 ## Layout
 
-The default composition uses a 188px navigation rail, fluid central workspace and 318px inspector. Below 1150px the rail collapses to icons; below 960px preview comparisons prioritize the processed result. The process dock remains visible at every supported size.
+```
+┌ Title bar 44px: wordmark · mode switch ·············· Локально · theme · version · [win caption]
+├ Notices (errors, updates) — only when present
+├ Workbench: Queue 320 │ Stage (fluid) │ Inspector 336
+└ Process dock: state · readiness / live progress · primary action
+```
 
-## Elevation & Depth
-
-Structure is primarily tonal and divided by one-pixel borders. Shadow is reserved for modal surfaces; ordinary panels do not combine borders and shadows.
-
-## Shapes
-
-Controls use 5–8px radii. Larger work surfaces use 12px. Pills are limited to compact status labels.
+- The title bar is the window caption. On Windows the native buttons draw over its right edge (`titleBarOverlay`), and `env(titlebar-area-*)` reserves their space.
+- Panels are 14px-radius planes separated by 12px gutters. Hairline borders, no shadows.
+- Shadows appear only on things that float: segmented thumbs, dialog, toast, result sheet.
+- Breakpoints: ≥1600 wider columns; ≤1240 compact chips; ≤1080 queue stacks above the stage, compare collapses to the result, nav shows icons only.
 
 ## Components
 
-Buttons respond on hover and press with property-specific transitions. Queue rows reveal actions on intent and use an inset accent for selection. Inputs use subdued fills and a two-pixel visible focus ring. Progress is linear and continuous.
+| Component | Rule |
+|---|---|
+| Segmented | Radio group. Arrow keys move selection. Thumb glides with a spring. Used for theme, format, preview view and backdrop. |
+| Queue row | Whole row selects. Tile shows state (folder, spinner, check, warning). Actions appear on hover/focus/selection. Selection is a cobalt tint plus a 1px inset ring. |
+| Dropzone | Fills the queue when empty and lists formats; shrinks to one line after the first source. The whole queue panel accepts drops. |
+| Stage | «Результат» or «Сравнение». Backdrop: checker, light, dark (stored per viewer). Canvas size badge on the result. Hold `\` or the button to see the original in place. |
+| Draft preview | The fast draft renders blurred and sharpens when the full-quality pass lands. Blur means "not final". |
+| Inspector | Sections: Пресет, Композиция, Формат, Сохранение. Range + exact number for every scalar. Advanced options sit in a disclosure. |
+| Process dock | Idle: what is missing, as clickable readiness steps. Running: rolling digits, speed, time left, sweep on the bar, Stop. |
+| Result sheet | One row: outcome, three stats that count up, actions. Errors in a disclosure. |
+| History | Table: run, output folder, totals, duration, copy report. |
+| Toast | Confirms silent actions (report copied). Auto-dismisses in 2.2 s. |
 
-## Do's and Don'ts
+## Motion
 
-### Do:
+Library: `motion` (motion.dev) for presence, layout and springs; CSS for hover, press and loops. Presets live in `src/renderer/ui/motion.ts`.
 
-- **Do** keep the primary processing action visible and singular.
-- **Do** use tabular figures for progress and counts.
-- **Do** state errors with a recovery path.
+- **Focal moment: a run.** Start morphs into Stop, digits roll per changed place, the bar sweeps, and on completion the result sheet arrives with numbers counting up and the queue tiles turn into checks.
+- **Continuity.** Mode switch shifts content 12px in the direction of the tab order. The nav pill and segmented thumbs travel between options.
+- **Feedback.** Press scales to 0.985. Hover is colour only. Draft → full quality is a blur-to-sharp transition.
+- **Timing.** 90–140 ms feedback, 200–320 ms state change, 480 ms reveal. Exits are faster than entrances. Easing `cubic-bezier(0.16, 1, 0.3, 1)`.
+- **Reduced motion.** `MotionConfig reducedMotion="user"` drops transforms; CSS animations collapse to 1 ms. Colour and opacity feedback stays.
 
-### Don't:
+## Don't
 
-- **Don't** add gradients, glow, glass panels or decorative loops.
-- **Don't** animate layout for large lists.
-- **Don't** use emoji or Unicode glyphs as interface icons.
+- Gradient text, glass panels, glow halos, colored side stripes on cards.
+- Emoji or Unicode glyphs as icons. Icons come from Lucide at 1.9–2.1 stroke.
+- Animating layout properties on large lists. Queue rows animate position only.
+- Raw hex in components. Read semantic tokens.
+- Inline `data:` assets: the CSP allows `'self'` only (`assetsInlineLimit: 0`).
