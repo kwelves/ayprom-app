@@ -19,6 +19,10 @@ AYPROM использует `electron-updater`, NSIS и публичные GitHu
 5. CI сверяет version, имя installer и SHA-512 из `latest.yml`, проверяет unpacked/installed/Portable и добавляет `SHA256SUMS.txt`.
 6. Draft остаётся невидимым для updater до ручной публикации.
 
+### Ручной запуск без push тега
+
+Когда тег нельзя запушить (например, с телефона), релиз запускается из Actions: **Windows → Run workflow**, ветка `main`, галочка `release`. Workflow берёт версию из `package.json`, отказывается работать, если тег `vX.Y.Z` уже существует, и создаёт тот же draft с `--target` на проверенный коммит `main`. Тег появляется в момент публикации draft. Публикация заново запускает workflow по тегу; release job видит, что релиз уже опубликован, и ничего не меняет.
+
 `v1.0.2` updater не содержит, поэтому переход `v1.0.2 → v1.1.0` выполняется вручную. `v1.1.0` — bootstrap release; штатный in-app путь начинается с `v1.1.0 → v1.1.1+`.
 
 ## Unsigned Windows build
