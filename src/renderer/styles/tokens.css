@@ -127,15 +127,15 @@
   --queue-w: 320px;
   --inspector-w: 336px;
 
-  /* Motion */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Motion: strong curves; UI motion stays under 300 ms */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --t-instant: 90ms;
-  --t-fast: 140ms;
+  --t-instant: 100ms;
+  --t-fast: 160ms;
   --t-base: 200ms;
-  --t-slow: 320ms;
-  --t-reveal: 480ms;
+  --t-slow: 240ms;
+  --t-reveal: 300ms;
 }
 
 :root[data-theme="dark"] {

@@ -1,17 +1,14 @@
-import { useEffect, useRef } from "react";
-import {
-  AnimatePresence,
-  animate,
-  motion,
-  useReducedMotion,
-} from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { animate, useReducedMotion } from "motion/react";
 import { ease } from "./motion";
 
 const format = new Intl.NumberFormat("ru-RU");
 
 /**
- * Live counter: only the digits that change roll in, so a fast-moving
- * progress count stays readable instead of flickering.
+ * Live progress count. It changes many times per second, so it does not
+ * animate (rolling digits would never be readable); instead the shown value
+ * is sampled at most every 120 ms with tabular figures, which keeps the
+ * number still enough to read.
  */
 export function Digits({
   value,
@@ -20,40 +17,22 @@ export function Digits({
   value: number;
   className?: string;
 }) {
-  const text = format.format(value);
-  const chars = Array.from(text);
-  return (
-    <span className={`digits num ${className}`} aria-label={text}>
-      {chars.map((char, index) => {
-        const place = chars.length - index;
-        return (
-          <span className="digit-slot" key={place} aria-hidden="true">
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.span
-                key={char}
-                className="digit"
-                initial={{ y: "55%", opacity: 0, filter: "blur(2px)" }}
-                animate={{
-                  y: "0%",
-                  opacity: 1,
-                  filter: "blur(0px)",
-                  transition: { duration: 0.26, ease: ease.out },
-                }}
-                exit={{
-                  y: "-45%",
-                  opacity: 0,
-                  filter: "blur(2px)",
-                  transition: { duration: 0.16, ease: ease.standard },
-                }}
-              >
-                {char}
-              </motion.span>
-            </AnimatePresence>
-          </span>
-        );
-      })}
-    </span>
-  );
+  const [shown, setShown] = useState(value);
+  const last = useRef(0);
+  useEffect(() => {
+    const wait = 120 - (performance.now() - last.current);
+    if (wait <= 0) {
+      last.current = performance.now();
+      setShown(value);
+      return;
+    }
+    const timer = setTimeout(() => {
+      last.current = performance.now();
+      setShown(value);
+    }, wait);
+    return () => clearTimeout(timer);
+  }, [value]);
+  return <span className={`num ${className}`}>{format.format(shown)}</span>;
 }
 
 /** Result statistic that counts up once when it first appears. */
@@ -80,7 +59,7 @@ export function CountUp({
       return;
     }
     const controls = animate(0, value, {
-      duration: Math.min(1.1, 0.45 + Math.log10(value + 1) * 0.22),
+      duration: Math.min(0.8, 0.4 + Math.log10(value + 1) * 0.12),
       ease: ease.out,
       onUpdate: (latest) => {
         node.textContent = formatter.format(latest);

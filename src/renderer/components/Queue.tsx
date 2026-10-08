@@ -11,7 +11,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type { ScanJob } from "../../shared/contracts";
-import { plural, shortPath } from "../ui/format";
+import { count, plural, shortPath } from "../ui/format";
 import { Meter } from "../ui/Meter";
 import { ease, spring } from "../ui/motion";
 
@@ -94,7 +94,7 @@ export function Queue({
           <h2 id="queue-title">Очередь</h2>
           <p className="panel-sub num">
             {jobs.length
-              ? `${jobs.length} ${plural(jobs.length, ["источник", "источника", "источников"])} · ${total} фото`
+              ? `${jobs.length} ${plural(jobs.length, ["источник", "источника", "источников"])} · ${count(total)} фото`
               : "Папки и отдельные фото"}
           </p>
         </div>
@@ -123,17 +123,17 @@ export function Queue({
                   <motion.li
                     key={job.id}
                     layout="position"
-                    initial={{ opacity: 0, y: 10, scale: 0.985 }}
+                    initial={{ opacity: 0, y: 6, scale: 0.98 }}
                     animate={{
                       opacity: 1,
                       y: 0,
                       scale: 1,
-                      transition: { duration: 0.3, ease: ease.out },
+                      transition: { duration: 0.22, ease: ease.out },
                     }}
                     exit={{
                       opacity: 0,
                       scale: 0.97,
-                      transition: { duration: 0.14, ease: ease.standard },
+                      transition: { duration: 0.12, ease: ease.standard },
                     }}
                     transition={spring.layout}
                     className={`queue-item ${selected ? "is-selected" : ""} ${status ? `tone-${status.tone}` : ""}`}
@@ -169,12 +169,14 @@ export function Queue({
                       </div>
                       <p className="queue-meta num">
                         <span>
-                          {job.status ? `${done} / ${job.total}` : job.total}{" "}
+                          {job.status
+                            ? `${count(done)} / ${count(job.total)}`
+                            : count(job.total)}{" "}
                           фото
                         </span>
                         <span aria-hidden="true">·</span>
                         <span>
-                          {job.folders}{" "}
+                          {count(job.folders)}{" "}
                           {plural(job.folders, ["папка", "папки", "папок"])}
                         </span>
                       </p>
@@ -212,7 +214,11 @@ export function Queue({
                           → {shortPath(job.destination)}
                         </p>
                       )}
-                      {job.error && <p className="inline-error">{job.error}</p>}
+                      {job.error && (
+                        <p className="inline-error clamp-3" title={job.error}>
+                          {job.error}
+                        </p>
+                      )}
                       {!!job.errors?.length && (
                         <details className="disclosure disclosure-danger">
                           <summary>

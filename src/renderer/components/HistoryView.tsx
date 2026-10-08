@@ -7,7 +7,7 @@ import {
   History,
 } from "lucide-react";
 import type { Summary } from "../../shared/contracts";
-import { clock, runDate, shortPath } from "../ui/format";
+import { clock, count, runDate, shortPath } from "../ui/format";
 import { ease } from "../ui/motion";
 
 export function HistoryView({
@@ -33,7 +33,7 @@ export function HistoryView({
           <h1 id="history-title">История операций</h1>
           <p className="panel-sub num">
             {history.length
-              ? `${history.length} из 30 сохранённых запусков · ${totals.processed} фото обработано${totals.failed ? ` · ${totals.failed} с ошибками` : ""}`
+              ? `${history.length} из 30 сохранённых запусков · ${count(totals.processed)} фото обработано${totals.failed ? ` · ${count(totals.failed)} с ошибками` : ""}`
               : "Последние результаты, ошибки и папки экспорта"}
           </p>
         </div>
@@ -84,14 +84,14 @@ export function HistoryView({
                 role="row"
                 key={item.id}
                 className="history-row"
-                initial={{ opacity: 0, y: 6 }}
+                initial={{ opacity: 0, transform: "translateY(6px)" }}
                 animate={{
                   opacity: 1,
-                  y: 0,
+                  transform: "translateY(0px)",
                   transition: {
-                    duration: 0.3,
+                    duration: 0.22,
                     ease: ease.out,
-                    delay: Math.min(index, 8) * 0.03,
+                    delay: Math.min(index, 8) * 0.035,
                   },
                 }}
               >
@@ -122,13 +122,13 @@ export function HistoryView({
                 </span>
                 <span role="cell" className="history-counts num">
                   <span>
-                    <b>{item.processed}</b> готово
+                    <b>{count(item.processed)}</b> готово
                   </span>
                   <span>
-                    <b>{item.skipped}</b> пропущено
+                    <b>{count(item.skipped)}</b> пропущено
                   </span>
                   <span className={item.failed ? "is-danger" : ""}>
-                    <b>{item.failed}</b> ошибок
+                    <b>{count(item.failed)}</b> ошибок
                   </span>
                 </span>
                 <span role="cell" className="history-time num cell-end">

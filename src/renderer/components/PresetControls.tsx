@@ -99,10 +99,10 @@ export function PresetControls({
           {dirty && (
             <motion.span
               className="badge badge-warning"
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.85 }}
-              transition={spring.snappy}
+              initial={{ opacity: 0, transform: "scale(0.95)" }}
+              animate={{ opacity: 1, transform: "scale(1)" }}
+              exit={{ opacity: 0, transform: "scale(0.95)" }}
+              transition={{ duration: 0.16, ease: ease.out }}
             >
               Изменён
             </motion.span>
@@ -207,10 +207,10 @@ export function PresetControls({
         {dirty && (
           <motion.div
             className="preset-draft"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.22, ease: ease.out }}
+            initial={{ opacity: 0, transform: "translateY(-3px)" }}
+            animate={{ opacity: 1, transform: "translateY(0px)" }}
+            exit={{ opacity: 0, transition: { duration: 0.1 } }}
+            transition={{ duration: 0.18, ease: ease.out }}
           >
             <p className="hint">
               Черновик сохраняется до закрытия приложения.{" "}
@@ -312,8 +312,8 @@ function PresetDialog({
     <motion.div
       className="scrim"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { duration: 0.18 } }}
-      exit={{ opacity: 0, transition: { duration: 0.14 } }}
+      animate={{ opacity: 1, transition: { duration: 0.18, ease: ease.out } }}
+      exit={{ opacity: 0, transition: { duration: 0.12 } }}
       onPointerDown={(event) => {
         if (event.target === event.currentTarget) close();
       }}
@@ -324,12 +324,15 @@ function PresetDialog({
         aria-modal="true"
         aria-labelledby="preset-dialog-title"
         className="dialog"
-        initial={{ opacity: 0, y: 10, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1, transition: spring.gentle }}
+        initial={{ opacity: 0, transform: "translateY(6px) scale(0.97)" }}
+        animate={{
+          opacity: 1,
+          transform: "translateY(0px) scale(1)",
+          transition: spring.gentle,
+        }}
         exit={{
           opacity: 0,
-          y: 4,
-          scale: 0.98,
+          transform: "translateY(2px) scale(0.98)",
           transition: { duration: 0.12, ease: ease.standard },
         }}
       >

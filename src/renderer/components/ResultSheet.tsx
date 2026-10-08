@@ -11,7 +11,7 @@ import {
 import type { Summary } from "../../shared/contracts";
 import { CountUp } from "../ui/Digits";
 import { shortPath } from "../ui/format";
-import { spring } from "../ui/motion";
+import { ease, spring } from "../ui/motion";
 
 /** Completion report. Appears once per run; the numbers count up into place. */
 export function ResultSheet({
@@ -47,18 +47,22 @@ export function ResultSheet({
       className={`result tone-${tone}`}
       aria-live="polite"
       aria-labelledby="result-title"
-      initial={{ opacity: 0, y: -10, scale: 0.99 }}
-      animate={{ opacity: 1, y: 0, scale: 1, transition: spring.gentle }}
-      exit={{ opacity: 0, y: -6, transition: { duration: 0.14 } }}
+      initial={{ opacity: 0, transform: "translateY(-6px)" }}
+      animate={{
+        opacity: 1,
+        transform: "translateY(0px)",
+        transition: spring.gentle,
+      }}
+      exit={{ opacity: 0, transition: { duration: 0.12 } }}
     >
       <div className="result-head">
         <motion.span
           className="result-icon"
-          initial={{ scale: 0.5, rotate: -20 }}
+          initial={{ transform: "scale(0.9)", opacity: 0 }}
           animate={{
-            scale: 1,
-            rotate: 0,
-            transition: { ...spring.snappy, delay: 0.08 },
+            transform: "scale(1)",
+            opacity: 1,
+            transition: { duration: 0.2, ease: ease.out, delay: 0.06 },
           }}
         >
           <Icon size={19} strokeWidth={2.1} />
